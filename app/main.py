@@ -31,7 +31,7 @@ from llms.api import router as router_7
 from prompts.api import router as router_8
 from tools.api import router as router_9
 from chains.api import router as router_10
-from gcs_data_storage.api import router as router_11
+#from gcs_data_storage.api import router as router_11
 
 app = FastAPI()
 
@@ -44,7 +44,7 @@ app.add_middleware(
 )
 
 app.include_router(router_1, prefix="/data_stores", tags=["data_stores"])
-app.include_router(router_11, prefix="/gcs_data_stores", tags=["gcs_data_stores"])
+#app.include_router(router_11, prefix="/gcs_data_stores", tags=["gcs_data_stores"])
 app.include_router(router_2, prefix="/document_loaders", tags=["document_loaders"])
 app.include_router(router_3, prefix="/document_stores", tags=["document_stores"])
 app.include_router(router_4, prefix="/document_transformers", tags=["document_transformers"])
