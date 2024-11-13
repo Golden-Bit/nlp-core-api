@@ -15,7 +15,7 @@ class WriteDataModel(BaseModel):
 class ReadDataModel(BaseModel):
     database_name: Optional[str] = Field(None, title="Database Name", description="Nome del database.")
     collection_name: Optional[str] = Field(None, title="Collection Name", description="Nome della collection.")
-    query: Optional[str] = Field(default="{}", title="Query", description="Query per il recupero dei dati.")
+    query: str = Field(default="{}", title="Query", description="Query per il recupero dei dati.")
 
 
 class DeleteDataModel(BaseModel):
@@ -62,19 +62,19 @@ class MongoDBToolKitManager:
         result = collection.insert_one(json.loads(data))
         return f"Document inserted with id: {str(result.inserted_id)}"
 
-    def read_from_mongo(self, database_name: str, collection_name: str, query: Any):
+    def read_from_mongo(self, database_name: str, collection_name: str, query: str="{}"):
         """Legge documenti dalla collection specificata o da quella di default."""
         collection = self._get_collection(database_name=database_name, collection_name=collection_name)
         documents = list(collection.find(json.loads(query)))
         return str(documents)
 
-    def delete_from_mongo(self, database_name: str, collection_name: str, query: Any):
+    def delete_from_mongo(self, database_name: str, collection_name: str, query: str = "{}"):
         """Elimina documenti dalla collection specificata o da quella di default."""
         collection = self._get_collection(database_name=database_name, collection_name=collection_name)
         result = collection.delete_one(json.loads(query))
         return f"Documents deleted: {result.deleted_count}"
 
-    def update_in_mongo(self, database_name: str, collection_name: str, query: Any, new_values: str):
+    def update_in_mongo(self, database_name: str, collection_name: str, query: str, new_values: str):
         """Aggiorna documenti nella collection specificata o in quella di default."""
         collection = self._get_collection(database_name=database_name, collection_name=collection_name)
         result = collection.update_one(json.loads(query), {"$set": json.loads(new_values)})
