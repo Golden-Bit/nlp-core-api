@@ -26,7 +26,7 @@ def get_chain(llm: Any = None,
 
     agent_tools = []
     for tool in tools:
-        initialized_tools = tools_map[tool["name"]](tool["kwargs"]).get_tools()
+        initialized_tools = tools_map[tool["name"]](**tool["kwargs"]).get_tools()
         agent_tools.extend(initialized_tools)
 
     # Get the prompt to use - you can modify this!
