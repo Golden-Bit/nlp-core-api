@@ -47,7 +47,7 @@ class VectorStoreToolKitManager:
         return retriever
 
     def search(self, query: str):
-        self.as_retriever().invoke(input=query)
+        return str(self.as_retriever().invoke(input=query))
 
     def get_tools(self):
         """Restituisce una lista degli strumenti configurati usando StructuredTool."""
