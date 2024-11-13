@@ -150,7 +150,7 @@ class ChainManager:
 
     def list_chain_configs(self):
         configs = list(
-            self.collection.find({}, {"_id": 1, "chain_id": 1, "prompt_id": 1, "llm_id": 1, "vectorstore_id": 1}))
+            self.collection.find({})) #, {"_id": 1, "chain_id": 1, "prompt_id": 1, "llm_id": 1, "vectorstore_id": 1}))
         return configs
 
     def get_chain_config(self, config_id: str):
