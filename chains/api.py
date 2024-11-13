@@ -22,13 +22,14 @@ chain_manager = ChainManager(collection)
 
 
 class ChainConfigRequest(BaseModel):
-    chain_type: str = Field(..., example="qa_chain", title="Chain Type", description="The chain's type to configure.")
+    chain_type: str = Field("agent_with_tools", example="qa_chain", title="Chain Type", description="The chain's type to configure.")
     config_id: str = Field(..., example="example_chain_config", title="Config ID", description="The unique ID of the chain configuration.")
     chain_id: str = Field(..., example="example_chain", title="Chain ID", description="The unique ID of the chain.")
-    prompt_id: str = Field(..., example="example_prompt", title="Prompt ID", description="The unique ID of the prompt.")
-    llm_id: str = Field(..., example="example_llm", title="LLM ID", description="The unique ID of the LLM.")
-    vectorstore_id: str = Field(..., example="example_vectorstore", title="Vectorstore ID", description="The unique ID of the vectorstore.")
-
+    prompt_id: str = Field("prompt_id", example="example_prompt", title="Prompt ID", description="The unique ID of the prompt.")
+    system_message: str = Field("you are an helpful assistant", example="example_system_message", title="System Message", description="The system message of the agent.")
+    llm_id: str = Field("llm_id", example="llm_id", title="LLM ID", description="The unique ID of the LLM.")
+    vectorstore_id: str = Field("vectorstore_id", example="example_vectorstore", title="Vectorstore ID", description="The unique ID of the vectorstore.")
+    tools: List[Dict[str, Any]] = Field([], example="example_tools", title="Vectorstore ID", description="The unique ID of the vectorstore.")
 
 class ExecuteChainRequest(BaseModel):
     chain_id: str = Field(..., example="example_chain", title="Chain ID", description="The unique ID of the chain to execute.")
