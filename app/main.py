@@ -33,7 +33,9 @@ from tools.api import router as router_9
 from chains.api import router as router_10
 #from gcs_data_storage.api import router as router_11
 
-app = FastAPI()
+app = FastAPI(
+    root_path="/llm-core"
+)
 
 app.add_middleware(
     CORSMiddleware,
