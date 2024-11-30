@@ -181,7 +181,7 @@ class TemplateManager:
             <!-- 1.2 Chi è {company_name} -->
             <h3>1.2 Chi è {company_name}</h3>
             <div class="content-placeholder">
-                <1.2 Chi è siamo| Fornire una descrizione dell'azienda, inclusa la missione, la visione, i valori fondamentali, i settori di attività e i principali risultati ottenuti. |1.2 Chi è siamo>
+                <1.2 Chi siamo| Fornire una descrizione dell'azienda, inclusa la missione, la visione, i valori fondamentali, i settori di attività e i principali risultati ottenuti. |1.2 Chi siamo>
             </div>
             <!-- Esempio di grafico o tabella -->
             <div class="image-placeholder">
