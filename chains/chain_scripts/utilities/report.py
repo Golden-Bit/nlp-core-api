@@ -181,7 +181,7 @@ class TemplateManager:
             <!-- 1.2 Chi è {company_name} -->
             <h3>1.2 Chi è {company_name}</h3>
             <div class="content-placeholder">
-                <1.2 Chi è {company_name}| Fornire una descrizione dell'azienda, inclusa la missione, la visione, i valori fondamentali, i settori di attività e i principali risultati ottenuti. |1.2 Chi è {company_name}>
+                <1.2 Chi è siamo| Fornire una descrizione dell'azienda, inclusa la missione, la visione, i valori fondamentali, i settori di attività e i principali risultati ottenuti. |1.2 Chi è siamo>
             </div>
             <!-- Esempio di grafico o tabella -->
             <div class="image-placeholder">
@@ -221,8 +221,35 @@ class TemplateManager:
                 <2.1 Il Green Team| Descrivere il team dedicato alle iniziative di sostenibilità all'interno dell'azienda, includendo la composizione del team, i ruoli chiave, le responsabilità e gli obiettivi raggiunti durante il periodo di rendicontazione. |2.1 Il Green Team>
             </div>
 
-            <!-- ... Altre sezioni del Capitolo 2 ... -->
+            <!-- 2.2 Attrazione e conservazione dei talenti -->
+            <h3>2.2 Attrazione e conservazione dei talenti</h3>
+            <div class="content-placeholder">
+                <2.2 Attrazione e conservazione dei talenti| Dettagliare le strategie e le politiche adottate per attrarre nuovi talenti e mantenere quelli esistenti, inclusi programmi di formazione, piani di carriera, benefit offerti, ambiente di lavoro flessibile e risultati ottenuti (es. tassi di retention, nuove assunzioni). |2.2 Attrazione e conservazione dei talenti>
+            </div>
 
+            <!-- 2.3 Crescita e sviluppo del personale -->
+            <h3>2.3 Crescita e sviluppo del personale</h3>
+            <div class="content-placeholder">
+                <2.3 Crescita e sviluppo del personale| Illustrare le opportunità di formazione e sviluppo professionale offerte ai dipendenti, come corsi di aggiornamento, workshop, programmi di mentoring e come queste iniziative contribuiscono alla crescita delle competenze e al raggiungimento degli obiettivi aziendali. |2.3 Crescita e sviluppo del personale>
+            </div>
+
+            <!-- 2.4 Salute mentale e fisica delle persone -->
+            <h3>2.4 Salute mentale e fisica delle persone</h3>
+            <div class="content-placeholder">
+                <2.4 Salute mentale e fisica delle persone| Descrivere le misure adottate per garantire la salute e il benessere fisico e mentale dei dipendenti, come programmi di supporto psicologico, promozione dell'equilibrio vita-lavoro, attività di wellness, e presentare eventuali risultati o feedback raccolti. |2.4 Salute mentale e fisica delle persone>
+            </div>
+
+            <!-- 2.5 Valutazione delle performance -->
+            <h3>2.5 Valutazione delle performance</h3>
+            <div class="content-placeholder">
+                <2.5 Valutazione delle performance| Spiegare il processo di valutazione delle performance utilizzato dall'azienda, inclusi i criteri di valutazione, la frequenza delle valutazioni, come vengono utilizzati i feedback per migliorare le performance individuali e organizzative, e l'impatto sullo sviluppo dei dipendenti. |2.5 Valutazione delle performance>
+            </div>
+
+            <!-- 2.6 Condivisione, retreat e team building -->
+            <h3>2.6 Condivisione, retreat e team building</h3>
+            <div class="content-placeholder">
+                <2.6 Condivisione, retreat e team building| Presentare le attività organizzate per promuovere la coesione del team, come ritiri aziendali, eventi di team building, workshop collaborativi, e spiegare come queste iniziative contribuiscono a migliorare la comunicazione e le relazioni tra i dipendenti. |2.6 Condivisione, retreat e team building>
+            </div>
         </section>
 
         <!-- Capitolo 3 -->
@@ -235,8 +262,31 @@ class TemplateManager:
                 <Descrizione Cap.3| Fornire una descrizione generale del Capitolo 3, focalizzato sull'impegno dell'azienda verso la sostenibilità ambientale, le iniziative intraprese per ridurre l'impatto ambientale e contribuire alla lotta contro il cambiamento climatico. |Descrizione Cap.3>
             </div>
 
-            <!-- ... Sezioni del Capitolo 3 ... -->
+            <!-- 3.1 Attenzione al cambiamento climatico -->
+            <h3>3.1 Attenzione al cambiamento climatico</h3>
+            <div class="content-placeholder">
+                <3.1 Attenzione al cambiamento climatico| Descrivere le strategie adottate dall'azienda per affrontare il cambiamento climatico, inclusi gli obiettivi di riduzione delle emissioni di CO2, le azioni intraprese per migliorare l'efficienza energetica, l'utilizzo di energie rinnovabili e i progressi compiuti verso questi obiettivi. |3.1 Attenzione al cambiamento climatico>
+            </div>
+            <!-- Esempio di grafico o tabella -->
+            <div class="image-placeholder">
+                <p>Grafico delle emissioni di CO2 dell'azienda</p>
+            </div>
 
+            <!-- 3.2 Impatti ambientali legati a prodotti e servizi offerti -->
+            <h3>3.2 Impatti ambientali legati a prodotti e servizi offerti</h3>
+            <div class="content-placeholder">
+                <3.2 Impatti ambientali| Analizzare gli impatti ambientali associati ai prodotti e servizi dell'azienda, come l'impronta di carbonio dei prodotti, l'uso di risorse naturali, e le iniziative per migliorare la sostenibilità lungo il ciclo di vita dei prodotti. |3.2 Impatti ambientali>
+            </div>
+
+            <!-- 3.3 Supporto al Voluntary Carbon Market -->
+            <h3>3.3 Supporto al Voluntary Carbon Market</h3>
+            <div class="content-placeholder">
+                <3.3 Supporto al Voluntary Carbon Market| Spiegare come l'azienda partecipa e supporta il Mercato Volontario del Carbonio, includendo dettagli sui progetti di compensazione delle emissioni sostenuti, i criteri di selezione dei progetti, e l'impatto ambientale e sociale generato da tali iniziative. |3.3 Supporto al Voluntary Carbon Market>
+            </div>
+            <!-- Esempio di immagini dei progetti sostenuti -->
+            <div class="image-placeholder">
+                <p>Immagini dei progetti di compensazione sostenuti</p>
+            </div>
         </section>
 
         <!-- Capitolo 4 -->
@@ -249,8 +299,31 @@ class TemplateManager:
                 <Descrizione Cap.4| Fornire una descrizione generale del Capitolo 4, focalizzato sulla crescita sostenibile dell'azienda, le pratiche di governance, l'etica nei rapporti commerciali e l'innovazione tecnologica a supporto dell'azione climatica. |Descrizione Cap.4>
             </div>
 
-            <!-- ... Sezioni del Capitolo 4 ... -->
+            <!-- 4.1 La governance in Up2You -->
+            <h3>4.1 La governance in Up2You</h3>
+            <div class="content-placeholder">
+                <4.1 La governance in Up2You| Descrivere la struttura di governance dell'azienda, inclusa la composizione del Consiglio di Amministrazione, i ruoli chiave, le politiche di governance adottate per garantire trasparenza e responsabilità, e come queste pratiche supportano gli obiettivi di sostenibilità. |4.1 La governance in Up2You>
+            </div>
+            <!-- Esempio di organigramma -->
+            <div class="image-placeholder">
+                <p>Organigramma aziendale</p>
+            </div>
 
+            <!-- 4.2 Rapporti commerciali etici -->
+            <h3>4.2 Rapporti commerciali etici</h3>
+            <div class="content-placeholder">
+                <4.2 Rapporti commerciali etici| Presentare le politiche e le pratiche etiche adottate nei rapporti commerciali, come il rispetto delle normative, la prevenzione della corruzione, l'integrità nelle vendite, e come l'azienda garantisce trasparenza e correttezza nelle transazioni commerciali. |4.2 Rapporti commerciali etici>
+            </div>
+
+            <!-- 4.3 Tecnologia al servizio dell’azione climatica -->
+            <h3>4.3 Tecnologia al servizio dell’azione climatica</h3>
+            <div class="content-placeholder">
+                <4.3 Tecnologia al servizio dell’azione climatica| Illustrare come l'azienda utilizza la tecnologia per promuovere l'azione climatica, descrivendo le soluzioni digitali sviluppate, come la piattaforma CliMax e PlaNet, gli aggiornamenti implementati nel periodo di rendicontazione, e l'impatto positivo generato. |4.3 Tecnologia al servizio dell’azione climatica>
+            </div>
+            <!-- Esempio di schermate delle piattaforme -->
+            <div class="image-placeholder">
+                <p>Schermate delle soluzioni tecnologiche sviluppate</p>
+            </div>
         </section>
 
         <!-- Conclusione -->
@@ -296,7 +369,7 @@ class TemplateManager:
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2023 {company_name} - Tutti i diritti riservati</p>
+        <p>&copy; 2023 Up2You - Tutti i diritti riservati</p>
     </footer>
 </body>
 </html>
