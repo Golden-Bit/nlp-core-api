@@ -57,7 +57,7 @@ class TemplateManager:
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Bilancio di Sostenibilità 2023</title>
+    <title>Bilancio di Sostenibilità 2024</title>
     <style>
         body {{
             font-family: Arial, sans-serif;
@@ -299,8 +299,8 @@ class TemplateManager:
                 <Descrizione Cap.4| Fornire una descrizione generale del Capitolo 4, focalizzato sulla crescita sostenibile dell'azienda, le pratiche di governance, l'etica nei rapporti commerciali e l'innovazione tecnologica a supporto dell'azione climatica. |Descrizione Cap.4>
             </div>
 
-            <!-- 4.1 La governance in Up2You -->
-            <h3>4.1 La governance in Up2You</h3>
+            <!-- 4.1 La governance in {company_name} -->
+            <h3>4.1 La governance in {company_name}</h3>
             <div class="content-placeholder">
                 <4.1 La governance in Up2You| Descrivere la struttura di governance dell'azienda, inclusa la composizione del Consiglio di Amministrazione, i ruoli chiave, le politiche di governance adottate per garantire trasparenza e responsabilità, e come queste pratiche supportano gli obiettivi di sostenibilità. |4.1 La governance in Up2You>
             </div>
