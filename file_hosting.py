@@ -27,8 +27,8 @@ async def serve_file(file_path: str):
     # Normalizza il percorso per evitare path traversal
     full_path = os.path.normpath(full_path)
     # Verifica che il percorso sia all'interno della directory servita
-    if not full_path.startswith(os.path.abspath(DIRECTORY_TO_SERVE)):
-        raise HTTPException(status_code=403, detail="Accesso non autorizzato")
+    #if not full_path.startswith(os.path.abspath(DIRECTORY_TO_SERVE)):
+    #    raise HTTPException(status_code=403, detail="Accesso non autorizzato")
     # Verifica che il file esista e sia un file
     if os.path.isfile(full_path):
         return FileResponse(full_path)
