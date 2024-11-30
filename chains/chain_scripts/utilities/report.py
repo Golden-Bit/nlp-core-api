@@ -53,50 +53,50 @@ class TemplateManager:
             print(f"The template already exists at {template_path}.")
         else:
             # If not, create the template with a basic structure
-            basic_template = '''<!DOCTYPE html>
+            basic_template = f'''<!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
     <title>Bilancio di Sostenibilità 2023</title>
     <style>
-        body {
+        body {{
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             color: #333;
-        }
-        header, footer {
+        }}
+        header, footer {{
             background-color: #0F9D58;
             color: white;
             padding: 20px;
             text-align: center;
-        }
-        nav {
+        }}
+        nav {{
             background-color: #F1F1F1;
             padding: 10px;
             text-align: center;
             position: sticky;
             top: 0;
             z-index: 1000;
-        }
-        nav a {
+        }}
+        nav a {{
             margin: 0 15px;
             color: #0F9D58;
             text-decoration: none;
             font-weight: bold;
-        }
-        main {
+        }}
+        main {{
             padding: 20px;
-        }
-        h1, h2 {
+        }}
+        h1, h2 {{
             color: #0F9D58;
             margin-top: 40px;
-        }
-        h3 {
+        }}
+        h3 {{
             color: #333;
             margin-top: 30px;
-        }
-        .section-banner {
+        }}
+        .section-banner {{
             width: 100%;
             height: 200px;
             background-color: #E0E0E0;
@@ -106,15 +106,15 @@ class TemplateManager:
             color: #757575;
             font-size: 24px;
             margin-bottom: 30px;
-        }
-        .content-placeholder {
+        }}
+        .content-placeholder {{
             background-color: #F9F9F9;
             padding: 20px;
             border-left: 5px solid #0F9D58;
             margin-bottom: 20px;
             line-height: 1.6;
-        }
-        .image-placeholder {
+        }}
+        .image-placeholder {{
             width: 100%;
             height: 300px;
             background-color: #D3D3D3;
@@ -124,8 +124,8 @@ class TemplateManager:
             align-items: center;
             color: #666;
             font-size: 18px;
-        }
-        .table-placeholder {
+        }}
+        .table-placeholder {{
             width: 100%;
             background-color: #F0F0F0;
             padding: 15px;
@@ -133,10 +133,10 @@ class TemplateManager:
             text-align: center;
             color: #666;
             font-size: 18px;
-        }
-        footer {
+        }}
+        footer {{
             margin-top: 40px;
-        }
+        }}
     </style>
 </head>
 <body>
@@ -369,7 +369,7 @@ class TemplateManager:
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2023 Up2You - Tutti i diritti riservati</p>
+        <p>&copy; 2024 {company_name} - Tutti i diritti riservati</p>
     </footer>
 </body>
 </html>
