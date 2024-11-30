@@ -1,0 +1,305 @@
+import os
+from typing import List, Tuple, Optional
+from pydantic import BaseModel, Field
+from langchain_core.tools import StructuredTool
+import matplotlib.pyplot as plt
+
+# Modelli Pydantic per le funzioni di generazione grafici
+
+class GenerateLinePlotModel(BaseModel):
+    data_points: List[Tuple[float, float]] = Field(
+        ...,
+        title="Data Points",
+        description="Lista di tuple contenenti i punti (x, y)."
+    )
+    x_label: str = Field(
+        ...,
+        title="X-Axis Label",
+        description="Etichetta per l'asse X."
+    )
+    y_label: str = Field(
+        ...,
+        title="Y-Axis Label",
+        description="Etichetta per l'asse Y."
+    )
+    plot_title: str = Field(
+        ...,
+        title="Plot Title",
+        description="Titolo del grafico."
+    )
+    filename: str = Field(
+        ...,
+        title="Filename",
+        description="Nome del file PNG da salvare (inclusa l'estensione .png)."
+    )
+    root_dir: str = Field(
+        ...,
+        title="Root Directory",
+        description="Directory principale dove salvare il grafico."
+    )
+    color: Optional[str] = Field(
+        None,
+        title="Line Color",
+        description="Colore della linea (es. 'blue', '#FF0000')."
+    )
+    linestyle: Optional[str] = Field(
+        None,
+        title="Line Style",
+        description="Stile della linea (es. '-', '--', '-.', ':')."
+    )
+    marker: Optional[str] = Field(
+        None,
+        title="Marker",
+        description="Simbolo del marker (es. 'o', 's', '^')."
+    )
+
+class GenerateBarChartModel(BaseModel):
+    data_points: List[Tuple[str, float]] = Field(
+        ...,
+        title="Data Points",
+        description="Lista di tuple contenenti le categorie e i valori (categoria, valore)."
+    )
+    x_label: str = Field(
+        ...,
+        title="X-Axis Label",
+        description="Etichetta per l'asse X."
+    )
+    y_label: str = Field(
+        ...,
+        title="Y-Axis Label",
+        description="Etichetta per l'asse Y."
+    )
+    plot_title: str = Field(
+        ...,
+        title="Plot Title",
+        description="Titolo del grafico."
+    )
+    filename: str = Field(
+        ...,
+        title="Filename",
+        description="Nome del file PNG da salvare (inclusa l'estensione .png)."
+    )
+    root_dir: str = Field(
+        ...,
+        title="Root Directory",
+        description="Directory principale dove salvare il grafico."
+    )
+    color: Optional[str] = Field(
+        None,
+        title="Bar Color",
+        description="Colore delle barre (es. 'skyblue', '#00FF00')."
+    )
+    edgecolor: Optional[str] = Field(
+        None,
+        title="Edge Color",
+        description="Colore dei bordi delle barre."
+    )
+
+class GeneratePieChartModel(BaseModel):
+    data_points: List[Tuple[str, float]] = Field(
+        ...,
+        title="Data Points",
+        description="Lista di tuple contenenti le etichette e le dimensioni (etichetta, dimensione)."
+    )
+    plot_title: str = Field(
+        ...,
+        title="Plot Title",
+        description="Titolo del grafico."
+    )
+    filename: str = Field(
+        ...,
+        title="Filename",
+        description="Nome del file PNG da salvare (inclusa l'estensione .png)."
+    )
+    root_dir: str = Field(
+        ...,
+        title="Root Directory",
+        description="Directory principale dove salvare il grafico."
+    )
+    colors: Optional[List[str]] = Field(
+        None,
+        title="Colors",
+        description="Lista di colori per le fette (es. ['gold', 'lightcoral', 'lightskyblue'])."
+    )
+    autopct: Optional[str] = Field(
+        None,
+        title="Autopct",
+        description="Formato per visualizzare le percentuali sulle fette (es. '%1.1f%%')."
+    )
+    startangle: Optional[float] = Field(
+        None,
+        title="Start Angle",
+        description="Angolo di inizio del grafico (es. 90)."
+    )
+    explode: Optional[List[float]] = Field(
+        None,
+        title="Explode",
+        description="Lista di valori per 'esplodere' le fette (es. [0, 0.1, 0])."
+    )
+    shadow: Optional[bool] = Field(
+        False,
+        title="Shadow",
+        description="Se True, aggiunge un'ombra al grafico."
+    )
+
+# Classe GraphManager con metodi per generare grafici e restituire gli strumenti
+
+class GraphManager:
+    def __init__(self):
+        """Inizializza il GraphManager."""
+        pass
+
+    # Metodo per generare un grafico a linee
+    def generate_line_plot(self, **kwargs):
+        """Genera un grafico a linee e lo salva come file PNG."""
+        args = GenerateLinePlotModel(**kwargs)
+        x_values, y_values = zip(*args.data_points)
+        plt.figure()
+        plt.plot(
+            x_values,
+            y_values,
+            color=args.color,
+            linestyle=args.linestyle,
+            marker=args.marker
+        )
+        plt.xlabel(args.x_label)
+        plt.ylabel(args.y_label)
+        plt.title(args.plot_title)
+        os.makedirs(args.root_dir, exist_ok=True)
+        full_path = os.path.join(args.root_dir, args.filename)
+        plt.savefig(full_path)
+        plt.close()
+        return f"Line plot saved successfully at {full_path}"
+
+    # Metodo per generare un grafico a barre
+    def generate_bar_chart(self, **kwargs):
+        """Genera un grafico a barre e lo salva come file PNG."""
+        args = GenerateBarChartModel(**kwargs)
+        x_values, y_values = zip(*args.data_points)
+        plt.figure()
+        plt.bar(
+            x_values,
+            y_values,
+            color=args.color,
+            edgecolor=args.edgecolor
+        )
+        plt.xlabel(args.x_label)
+        plt.ylabel(args.y_label)
+        plt.title(args.plot_title)
+        os.makedirs(args.root_dir, exist_ok=True)
+        full_path = os.path.join(args.root_dir, args.filename)
+        plt.savefig(full_path)
+        plt.close()
+        return f"Bar chart saved successfully at {full_path}"
+
+    # Metodo per generare un grafico a torta
+    def generate_pie_chart(self, **kwargs):
+        """Genera un grafico a torta e lo salva come file PNG."""
+        args = GeneratePieChartModel(**kwargs)
+        labels, sizes = zip(*args.data_points)
+        plt.figure()
+        plt.pie(
+            sizes,
+            labels=labels,
+            colors=args.colors,
+            autopct=args.autopct,
+            startangle=args.startangle,
+            explode=args.explode,
+            shadow=args.shadow
+        )
+        plt.title(args.plot_title)
+        os.makedirs(args.root_dir, exist_ok=True)
+        full_path = os.path.join(args.root_dir, args.filename)
+        plt.savefig(full_path)
+        plt.close()
+        return f"Pie chart saved successfully at {full_path}"
+
+    # Metodo per restituire gli strumenti strutturati
+    def get_tools(self):
+        """Restituisce una lista degli strumenti configurati usando StructuredTool."""
+        return [
+            StructuredTool(
+                name="generate_line_plot",
+                func=self.generate_line_plot,
+                description=(
+                    "Usa questo strumento per generare un grafico a linee. "
+                    "Richiede punti dati, etichette degli assi, titolo, nome del file e directory di salvataggio."
+                ),
+                args_schema=GenerateLinePlotModel
+            ),
+            StructuredTool(
+                name="generate_bar_chart",
+                func=self.generate_bar_chart,
+                description=(
+                    "Usa questo strumento per generare un grafico a barre. "
+                    "Richiede punti dati (categorie e valori), etichette degli assi, titolo, nome del file e directory di salvataggio."
+                ),
+                args_schema=GenerateBarChartModel
+            ),
+            StructuredTool(
+                name="generate_pie_chart",
+                func=self.generate_pie_chart,
+                description=(
+                    "Usa questo strumento per generare un grafico a torta. "
+                    "Richiede punti dati (etichette e dimensioni), titolo, nome del file e directory di salvataggio."
+                ),
+                args_schema=GeneratePieChartModel
+            ),
+        ]
+
+# Esempi dettagliati di utilizzo
+
+if __name__ == "__main__":
+    # Inizializza il GraphManager
+    graph_manager = GraphManager()
+
+    # Esempio: Genera un grafico a linee
+    line_plot_args = {
+        "data_points": [(1, 2), (2, 3), (3, 5), (4, 7)],
+        "x_label": "X-Axis",
+        "y_label": "Y-Axis",
+        "plot_title": "Sample Line Plot",
+        "filename": "line_plot.png",
+        "root_dir": "data/plots",
+        "color": "blue",
+        "linestyle": "--",
+        "marker": "o"
+    }
+    message_line = graph_manager.generate_line_plot(**line_plot_args)
+    print(message_line)
+
+    # Esempio: Genera un grafico a barre
+    bar_chart_args = {
+        "data_points": [("Category A", 4), ("Category B", 7), ("Category C", 1)],
+        "x_label": "Categories",
+        "y_label": "Values",
+        "plot_title": "Sample Bar Chart",
+        "filename": "bar_chart.png",
+        "root_dir": "data/plots",
+        "color": "skyblue",
+        "edgecolor": "black"
+    }
+    message_bar = graph_manager.generate_bar_chart(**bar_chart_args)
+    print(message_bar)
+
+    # Esempio: Genera un grafico a torta
+    pie_chart_args = {
+        "data_points": [("Slice A", 30), ("Slice B", 45), ("Slice C", 25)],
+        "plot_title": "Sample Pie Chart",
+        "filename": "pie_chart.png",
+        "root_dir": "data/plots",
+        "colors": ["gold", "lightcoral", "lightskyblue"],
+        "autopct": "%1.1f%%",
+        "startangle": 90,
+        "explode": [0, 0.1, 0],
+        "shadow": True
+    }
+    message_pie = graph_manager.generate_pie_chart(**pie_chart_args)
+    print(message_pie)
+
+    # Ottenere gli strumenti strutturati
+    tools = graph_manager.get_tools()
+    for tool in tools:
+        print(f"Tool Name: {tool.name}")
+        print(f"Description: {tool.description}")
+        print(f"Arguments Schema: {tool.args_schema.schema()}\n")

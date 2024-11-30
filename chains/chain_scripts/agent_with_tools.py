@@ -9,6 +9,7 @@ from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTempla
 from langchain_openai import ChatOpenAI
 
 from chains.chain_scripts.utilities.dataloader import DocumentToolKitManager
+from chains.chain_scripts.utilities.graph import GraphManager
 from chains.chain_scripts.utilities.mongodb import MongoDBToolKitManager
 from chains.chain_scripts.utilities.vectorstore import VectorStoreToolKitManager
 from chains.chain_scripts.utilities.report import TemplateManager
@@ -18,7 +19,8 @@ tools_map = {
     "MongoDBTools": MongoDBToolKitManager,
     "DocumentTools": DocumentToolKitManager,
     "VectorStoreTools": VectorStoreToolKitManager,
-    "TemplateManager": TemplateManager
+    "TemplateManager": TemplateManager,
+    "GraphManager": GraphManager
 }
 
 
