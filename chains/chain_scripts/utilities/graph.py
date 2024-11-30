@@ -3,7 +3,7 @@ import time
 from typing import List, Optional
 from pydantic import BaseModel, Field
 from langchain_core.tools import StructuredTool
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 # Modelli Pydantic per i punti dati
 
@@ -167,71 +167,81 @@ class GraphManager:
     # Metodo per generare un grafico a linee
     def generate_line_plot(self, **kwargs):
         """Genera un grafico a linee e lo salva come file PNG."""
-        args = GenerateLinePlotModel(**kwargs)
-        x_values = [point.x for point in args.data_points]
-        y_values = [point.y for point in args.data_points]
-        plt.figure()
-        plt.plot(
-            x_values,
-            y_values,
-            color=args.color,
-            linestyle=args.linestyle,
-            marker=args.marker
-        )
-        plt.xlabel(args.x_label)
-        plt.ylabel(args.y_label)
-        plt.title(args.plot_title)
-        os.makedirs(args.root_dir, exist_ok=True)
-        full_path = os.path.join(args.root_dir, args.filename)
-        plt.savefig(full_path)
-        plt.close()
+        import matplotlib.pyplot as plt
+        try:
+            args = GenerateLinePlotModel(**kwargs)
+            x_values = [point.x for point in args.data_points]
+            y_values = [point.y for point in args.data_points]
+            plt.figure()
+            plt.plot(
+                x_values,
+                y_values,
+                color=args.color,
+                linestyle=args.linestyle,
+                marker=args.marker
+            )
+            plt.xlabel(args.x_label)
+            plt.ylabel(args.y_label)
+            plt.title(args.plot_title)
+            os.makedirs(args.root_dir, exist_ok=True)
+            full_path = os.path.join(args.root_dir, args.filename)
+            plt.savefig(full_path)
+            plt.close()
+        finally:
+            plt.close()
         time.sleep(5)
         return f"Line plot saved successfully at {full_path}"
 
     # Metodo per generare un grafico a barre
     def generate_bar_chart(self, **kwargs):
+        import matplotlib.pyplot as plt
         """Genera un grafico a barre e lo salva come file PNG."""
-        args = GenerateBarChartModel(**kwargs)
-        categories = [point.category for point in args.data_points]
-        values = [point.value for point in args.data_points]
-        plt.figure()
-        plt.bar(
-            categories,
-            values,
-            color=args.color,
-            edgecolor=args.edgecolor
-        )
-        plt.xlabel(args.x_label)
-        plt.ylabel(args.y_label)
-        plt.title(args.plot_title)
-        os.makedirs(args.root_dir, exist_ok=True)
-        full_path = os.path.join(args.root_dir, args.filename)
-        plt.savefig(full_path)
-        plt.close()
+        try:
+            args = GenerateBarChartModel(**kwargs)
+            categories = [point.category for point in args.data_points]
+            values = [point.value for point in args.data_points]
+            plt.figure()
+            plt.bar(
+                categories,
+                values,
+                color=args.color,
+                edgecolor=args.edgecolor
+            )
+            plt.xlabel(args.x_label)
+            plt.ylabel(args.y_label)
+            plt.title(args.plot_title)
+            os.makedirs(args.root_dir, exist_ok=True)
+            full_path = os.path.join(args.root_dir, args.filename)
+            plt.savefig(full_path)
+        finally:
+            plt.close()
         time.sleep(5)
         return f"Bar chart saved successfully at {full_path}"
 
     # Metodo per generare un grafico a torta
     def generate_pie_chart(self, **kwargs):
+        import matplotlib.pyplot as plt
         """Genera un grafico a torta e lo salva come file PNG."""
-        args = GeneratePieChartModel(**kwargs)
-        labels = [point.label for point in args.data_points]
-        sizes = [point.size for point in args.data_points]
-        plt.figure()
-        plt.pie(
-            sizes,
-            labels=labels,
-            colors=args.colors,
-            autopct=args.autopct,
-            startangle=args.startangle,
-            explode=args.explode,
-            shadow=args.shadow
-        )
-        plt.title(args.plot_title)
-        os.makedirs(args.root_dir, exist_ok=True)
-        full_path = os.path.join(args.root_dir, args.filename)
-        plt.savefig(full_path)
-        plt.close()
+        try:
+            args = GeneratePieChartModel(**kwargs)
+            labels = [point.label for point in args.data_points]
+            sizes = [point.size for point in args.data_points]
+            plt.figure()
+            plt.pie(
+                sizes,
+                labels=labels,
+                colors=args.colors,
+                autopct=args.autopct,
+                startangle=args.startangle,
+                explode=args.explode,
+                shadow=args.shadow
+            )
+            plt.title(args.plot_title)
+            os.makedirs(args.root_dir, exist_ok=True)
+            full_path = os.path.join(args.root_dir, args.filename)
+            plt.savefig(full_path)
+        finally:
+            plt.close()
         time.sleep(5)
         return f"Pie chart saved successfully at {full_path}"
 
