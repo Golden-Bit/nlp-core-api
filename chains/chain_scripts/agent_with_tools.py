@@ -11,12 +11,14 @@ from langchain_openai import ChatOpenAI
 from chains.chain_scripts.utilities.dataloader import DocumentToolKitManager
 from chains.chain_scripts.utilities.mongodb import MongoDBToolKitManager
 from chains.chain_scripts.utilities.vectorstore import VectorStoreToolKitManager
+from chains.chain_scripts.utilities.report import TemplateManager
 
 
 tools_map = {
     "MongoDBTools": MongoDBToolKitManager,
     "DocumentTools": DocumentToolKitManager,
-    "VectorStoreTools": VectorStoreToolKitManager
+    "VectorStoreTools": VectorStoreToolKitManager,
+    "TemplateManager": TemplateManager
 }
 
 
