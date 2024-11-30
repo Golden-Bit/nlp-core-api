@@ -183,10 +183,6 @@ class TemplateManager:
             <div class="content-placeholder">
                 <1.2 Chi siamo| Fornire una descrizione dell'azienda, inclusa la missione, la visione, i valori fondamentali, i settori di attività e i principali risultati ottenuti. |1.2 Chi siamo>
             </div>
-            <!-- Esempio di grafico o tabella -->
-            <div class="image-placeholder">
-                <p>Grafico o immagine relativa ai risultati aziendali</p>
-            </div>
 
             <!-- 1.3 La nostra identità -->
             <h3>1.3 La nostra identità</h3>
@@ -198,10 +194,6 @@ class TemplateManager:
             <h3>1.4 La cultura aziendale</h3>
             <div class="content-placeholder">
                 <1.4 La cultura aziendale| Presentare i valori e i principi che guidano la cultura aziendale, le pratiche interne che promuovono l'innovazione, la collaborazione, l'inclusione, e come questi elementi contribuiscono al raggiungimento degli obiettivi di sostenibilità. |1.4 La cultura aziendale>
-            </div>
-            <!-- Esempio di box informativo -->
-            <div class="table-placeholder">
-                <p>Box informativo sui valori aziendali</p>
             </div>
         </section>
 
@@ -267,10 +259,6 @@ class TemplateManager:
             <div class="content-placeholder">
                 <3.1 Attenzione al cambiamento climatico| Descrivere le strategie adottate dall'azienda per affrontare il cambiamento climatico, inclusi gli obiettivi di riduzione delle emissioni di CO2, le azioni intraprese per migliorare l'efficienza energetica, l'utilizzo di energie rinnovabili e i progressi compiuti verso questi obiettivi. |3.1 Attenzione al cambiamento climatico>
             </div>
-            <!-- Esempio di grafico o tabella -->
-            <div class="image-placeholder">
-                <p>Grafico delle emissioni di CO2 dell'azienda</p>
-            </div>
 
             <!-- 3.2 Impatti ambientali legati a prodotti e servizi offerti -->
             <h3>3.2 Impatti ambientali legati a prodotti e servizi offerti</h3>
@@ -282,10 +270,6 @@ class TemplateManager:
             <h3>3.3 Supporto al Voluntary Carbon Market</h3>
             <div class="content-placeholder">
                 <3.3 Supporto al Voluntary Carbon Market| Spiegare come l'azienda partecipa e supporta il Mercato Volontario del Carbonio, includendo dettagli sui progetti di compensazione delle emissioni sostenuti, i criteri di selezione dei progetti, e l'impatto ambientale e sociale generato da tali iniziative. |3.3 Supporto al Voluntary Carbon Market>
-            </div>
-            <!-- Esempio di immagini dei progetti sostenuti -->
-            <div class="image-placeholder">
-                <p>Immagini dei progetti di compensazione sostenuti</p>
             </div>
         </section>
 
@@ -304,10 +288,6 @@ class TemplateManager:
             <div class="content-placeholder">
                 <4.1 La governance in Up2You| Descrivere la struttura di governance dell'azienda, inclusa la composizione del Consiglio di Amministrazione, i ruoli chiave, le politiche di governance adottate per garantire trasparenza e responsabilità, e come queste pratiche supportano gli obiettivi di sostenibilità. |4.1 La governance in Up2You>
             </div>
-            <!-- Esempio di organigramma -->
-            <div class="image-placeholder">
-                <p>Organigramma aziendale</p>
-            </div>
 
             <!-- 4.2 Rapporti commerciali etici -->
             <h3>4.2 Rapporti commerciali etici</h3>
@@ -320,10 +300,7 @@ class TemplateManager:
             <div class="content-placeholder">
                 <4.3 Tecnologia al servizio dell’azione climatica| Illustrare come l'azienda utilizza la tecnologia per promuovere l'azione climatica, descrivendo le soluzioni digitali sviluppate, come la piattaforma CliMax e PlaNet, gli aggiornamenti implementati nel periodo di rendicontazione, e l'impatto positivo generato. |4.3 Tecnologia al servizio dell’azione climatica>
             </div>
-            <!-- Esempio di schermate delle piattaforme -->
-            <div class="image-placeholder">
-                <p>Schermate delle soluzioni tecnologiche sviluppate</p>
-            </div>
+
         </section>
 
         <!-- Conclusione -->
@@ -348,10 +325,6 @@ class TemplateManager:
             <div class="content-placeholder">
                 <Indice ESRS| Fornire una tabella o un elenco che mappi i contenuti del bilancio di sostenibilità con i requisiti specifici degli standard ESRS, facilitando la consultazione e la verifica della conformità da parte dei lettori interessati. |Indice ESRS>
             </div>
-            <!-- Esempio di tabella di mappatura -->
-            <div class="table-placeholder">
-                <p>Tabella di mappatura dei contenuti ESRS</p>
-            </div>
         </section>
 
         <!-- Informazioni di contatto -->
@@ -359,10 +332,6 @@ class TemplateManager:
             <h2>Informazioni di contatto</h2>
             <div class="content-placeholder">
                 <Informazioni di contatto| Inserire le informazioni di contatto dell'azienda per domande, commenti o richieste di ulteriori informazioni riguardanti il bilancio di sostenibilità, includendo indirizzi email, sito web e indirizzi fisici delle sedi principali. |Informazioni di contatto>
-            </div>
-            <!-- Esempio di dettagli di contatto -->
-            <div class="table-placeholder">
-                <p>Dettagli di contatto dell'azienda</p>
             </div>
         </section>
     </main>
