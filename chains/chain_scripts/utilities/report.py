@@ -59,44 +59,44 @@ class TemplateManager:
     <meta charset="UTF-8">
     <title>Bilancio di Sostenibilità 2023</title>
     <style>
-        body {{
+        body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             color: #333;
-        }}
-        header, footer {{
+        }
+        header, footer {
             background-color: #0F9D58;
             color: white;
             padding: 20px;
             text-align: center;
-        }}
-        nav {{
+        }
+        nav {
             background-color: #F1F1F1;
             padding: 10px;
             text-align: center;
             position: sticky;
             top: 0;
             z-index: 1000;
-        }}
-        nav a {{
+        }
+        nav a {
             margin: 0 15px;
             color: #0F9D58;
             text-decoration: none;
             font-weight: bold;
-        }}
-        main {{
+        }
+        main {
             padding: 20px;
-        }}
-        h1, h2 {{
+        }
+        h1, h2 {
             color: #0F9D58;
             margin-top: 40px;
-        }}
-        h3 {{
+        }
+        h3 {
             color: #333;
             margin-top: 30px;
-        }}
-        .section-banner {{
+        }
+        .section-banner {
             width: 100%;
             height: 200px;
             background-color: #E0E0E0;
@@ -106,15 +106,15 @@ class TemplateManager:
             color: #757575;
             font-size: 24px;
             margin-bottom: 30px;
-        }}
-        .content-placeholder {{
+        }
+        .content-placeholder {
             background-color: #F9F9F9;
             padding: 20px;
             border-left: 5px solid #0F9D58;
             margin-bottom: 20px;
             line-height: 1.6;
-        }}
-        .image-placeholder {{
+        }
+        .image-placeholder {
             width: 100%;
             height: 300px;
             background-color: #D3D3D3;
@@ -124,8 +124,8 @@ class TemplateManager:
             align-items: center;
             color: #666;
             font-size: 18px;
-        }}
-        .table-placeholder {{
+        }
+        .table-placeholder {
             width: 100%;
             background-color: #F0F0F0;
             padding: 15px;
@@ -133,10 +133,10 @@ class TemplateManager:
             text-align: center;
             color: #666;
             font-size: 18px;
-        }}
-        footer {{
+        }
+        footer {
             margin-top: 40px;
-        }}
+        }
     </style>
 </head>
 <body>
@@ -161,7 +161,7 @@ class TemplateManager:
         <section id="introduzione">
             <h2>Introduzione</h2>
             <div class="content-placeholder">
-                <p>&lt;Introduzione| Inserire un'introduzione generale al bilancio di sostenibilità, presentando l'azienda, la sua missione, i valori e l'importanza della sostenibilità per l'organizzazione. Fornire una panoramica degli obiettivi principali e delle aree chiave trattate nel rapporto. |Introduzione&gt;</p>
+                <Introduzione| Inserire un'introduzione generale al bilancio di sostenibilità, presentando l'azienda, la sua missione, i valori e l'importanza della sostenibilità per l'organizzazione. Fornire una panoramica degli obiettivi principali e delle aree chiave trattate nel rapporto. |Introduzione>
             </div>
         </section>
 
@@ -175,13 +175,13 @@ class TemplateManager:
             <!-- 1.1 La nostra storia -->
             <h3>1.1 La nostra storia</h3>
             <div class="content-placeholder">
-                <p>&lt;1.1 La nostra storia| Fornire una descrizione della storia dell'azienda, inclusi gli eventi chiave, le tappe fondamentali, la crescita nel tempo, e come l'azienda si è evoluta fino ad oggi, enfatizzando gli aspetti legati alla sostenibilità. |1.1 La nostra storia&gt;</p>
+                <1.1 La nostra storia| Fornire una descrizione della storia dell'azienda, inclusi gli eventi chiave, le tappe fondamentali, la crescita nel tempo, e come l'azienda si è evoluta fino ad oggi, enfatizzando gli aspetti legati alla sostenibilità. |1.1 La nostra storia>
             </div>
 
             <!-- 1.2 Chi è {company_name} -->
             <h3>1.2 Chi è {company_name}</h3>
             <div class="content-placeholder">
-                <p>&lt;1.2 Chi siamo| Fornire una descrizione dell'azienda, inclusa la missione, la visione, i valori fondamentali, i settori di attività e i principali risultati ottenuti. |1.2 Chi siamo&gt;</p>
+                <1.2 Chi è {company_name}| Fornire una descrizione dell'azienda, inclusa la missione, la visione, i valori fondamentali, i settori di attività e i principali risultati ottenuti. |1.2 Chi è {company_name}>
             </div>
             <!-- Esempio di grafico o tabella -->
             <div class="image-placeholder">
@@ -191,13 +191,13 @@ class TemplateManager:
             <!-- 1.3 La nostra identità -->
             <h3>1.3 La nostra identità</h3>
             <div class="content-placeholder">
-                <p>&lt;1.3 La nostra identità| Descrivere l'identità aziendale, come l'azienda si posiziona sul mercato, cosa la distingue dai concorrenti, e come la sostenibilità è integrata nel modello di business. |1.3 La nostra identità&gt;</p>
+                <1.3 La nostra identità| Descrivere l'identità aziendale, come l'azienda si posiziona sul mercato, cosa la distingue dai concorrenti, e come la sostenibilità è integrata nel modello di business. |1.3 La nostra identità>
             </div>
 
             <!-- 1.4 La cultura aziendale -->
             <h3>1.4 La cultura aziendale</h3>
             <div class="content-placeholder">
-                <p>&lt;1.4 La cultura aziendale| Presentare i valori e i principi che guidano la cultura aziendale, le pratiche interne che promuovono l'innovazione, la collaborazione, l'inclusione, e come questi elementi contribuiscono al raggiungimento degli obiettivi di sostenibilità. |1.4 La cultura aziendale&gt;</p>
+                <1.4 La cultura aziendale| Presentare i valori e i principi che guidano la cultura aziendale, le pratiche interne che promuovono l'innovazione, la collaborazione, l'inclusione, e come questi elementi contribuiscono al raggiungimento degli obiettivi di sostenibilità. |1.4 La cultura aziendale>
             </div>
             <!-- Esempio di box informativo -->
             <div class="table-placeholder">
@@ -212,13 +212,13 @@ class TemplateManager:
                 <p>Immagine rappresentativa del Capitolo 2</p>
             </div>
             <div class="content-placeholder">
-                <p>&lt;Descrizione Cap.2| Fornire una descrizione generale del Capitolo 2, focalizzato sulle persone dell'azienda, le iniziative intraprese per il loro benessere, sviluppo professionale e personale. Evidenziare l'importanza del capitale umano per l'organizzazione. |Descrizione Cap.2&gt;</p>
+                <Descrizione Cap.2| Fornire una descrizione generale del Capitolo 2, focalizzato sulle persone dell'azienda, le iniziative intraprese per il loro benessere, sviluppo professionale e personale. Evidenziare l'importanza del capitale umano per l'organizzazione. |Descrizione Cap.2>
             </div>
 
             <!-- 2.1 Il Green Team -->
             <h3>2.1 Il Green Team</h3>
             <div class="content-placeholder">
-                <p>&lt;2.1 Il Green Team| Descrivere il team dedicato alle iniziative di sostenibilità all'interno dell'azienda, includendo la composizione del team, i ruoli chiave, le responsabilità e gli obiettivi raggiunti durante il periodo di rendicontazione. |2.1 Il Green Team&gt;</p>
+                <2.1 Il Green Team| Descrivere il team dedicato alle iniziative di sostenibilità all'interno dell'azienda, includendo la composizione del team, i ruoli chiave, le responsabilità e gli obiettivi raggiunti durante il periodo di rendicontazione. |2.1 Il Green Team>
             </div>
 
             <!-- ... Altre sezioni del Capitolo 2 ... -->
@@ -232,7 +232,7 @@ class TemplateManager:
                 <p>Immagine rappresentativa del Capitolo 3</p>
             </div>
             <div class="content-placeholder">
-                <p>&lt;Descrizione Cap.3| Fornire una descrizione generale del Capitolo 3, focalizzato sull'impegno dell'azienda verso la sostenibilità ambientale, le iniziative intraprese per ridurre l'impatto ambientale e contribuire alla lotta contro il cambiamento climatico. |Descrizione Cap.3&gt;</p>
+                <Descrizione Cap.3| Fornire una descrizione generale del Capitolo 3, focalizzato sull'impegno dell'azienda verso la sostenibilità ambientale, le iniziative intraprese per ridurre l'impatto ambientale e contribuire alla lotta contro il cambiamento climatico. |Descrizione Cap.3>
             </div>
 
             <!-- ... Sezioni del Capitolo 3 ... -->
@@ -246,7 +246,7 @@ class TemplateManager:
                 <p>Immagine rappresentativa del Capitolo 4</p>
             </div>
             <div class="content-placeholder">
-                <p>&lt;Descrizione Cap.4| Fornire una descrizione generale del Capitolo 4, focalizzato sulla crescita sostenibile dell'azienda, le pratiche di governance, l'etica nei rapporti commerciali e l'innovazione tecnologica a supporto dell'azione climatica. |Descrizione Cap.4&gt;</p>
+                <Descrizione Cap.4| Fornire una descrizione generale del Capitolo 4, focalizzato sulla crescita sostenibile dell'azienda, le pratiche di governance, l'etica nei rapporti commerciali e l'innovazione tecnologica a supporto dell'azione climatica. |Descrizione Cap.4>
             </div>
 
             <!-- ... Sezioni del Capitolo 4 ... -->
@@ -257,7 +257,7 @@ class TemplateManager:
         <section id="conclusione">
             <h2>Conclusione</h2>
             <div class="content-placeholder">
-                <p>&lt;Conclusione| Fornire una conclusione che riassuma i punti chiave del bilancio di sostenibilità, esprima l'impegno continuo dell'azienda verso la sostenibilità, delinei le prospettive future e ringrazi i lettori per l'attenzione. |Conclusione&gt;</p>
+                <Conclusione| Fornire una conclusione che riassuma i punti chiave del bilancio di sostenibilità, esprima l'impegno continuo dell'azienda verso la sostenibilità, delinei le prospettive future e ringrazi i lettori per l'attenzione. |Conclusione>
             </div>
         </section>
 
@@ -265,7 +265,7 @@ class TemplateManager:
         <section id="nota-metodologica">
             <h2>Nota metodologica</h2>
             <div class="content-placeholder">
-                <p>&lt;Nota metodologica| Descrivere la metodologia adottata per la redazione del bilancio di sostenibilità, specificando gli standard e le linee guida seguite (ad esempio, ESRS), il perimetro di rendicontazione, le fonti dei dati utilizzati, eventuali cambiamenti rispetto all'anno precedente e informazioni sulla verifica dei dati. |Nota metodologica&gt;</p>
+                <Nota metodologica| Descrivere la metodologia adottata per la redazione del bilancio di sostenibilità, specificando gli standard e le linee guida seguite (ad esempio, ESRS), il perimetro di rendicontazione, le fonti dei dati utilizzati, eventuali cambiamenti rispetto all'anno precedente e informazioni sulla verifica dei dati. |Nota metodologica>
             </div>
         </section>
 
@@ -273,7 +273,7 @@ class TemplateManager:
         <section id="indice-esrs">
             <h2>Indice dei contenuti ESRS</h2>
             <div class="content-placeholder">
-                <p>&lt;Indice ESRS| Fornire una tabella o un elenco che mappi i contenuti del bilancio di sostenibilità con i requisiti specifici degli standard ESRS, facilitando la consultazione e la verifica della conformità da parte dei lettori interessati. |Indice ESRS&gt;</p>
+                <Indice ESRS| Fornire una tabella o un elenco che mappi i contenuti del bilancio di sostenibilità con i requisiti specifici degli standard ESRS, facilitando la consultazione e la verifica della conformità da parte dei lettori interessati. |Indice ESRS>
             </div>
             <!-- Esempio di tabella di mappatura -->
             <div class="table-placeholder">
@@ -285,7 +285,7 @@ class TemplateManager:
         <section id="contatti">
             <h2>Informazioni di contatto</h2>
             <div class="content-placeholder">
-                <p>&lt;Informazioni di contatto| Inserire le informazioni di contatto dell'azienda per domande, commenti o richieste di ulteriori informazioni riguardanti il bilancio di sostenibilità, includendo indirizzi email, sito web e indirizzi fisici delle sedi principali. |Informazioni di contatto&gt;</p>
+                <Informazioni di contatto| Inserire le informazioni di contatto dell'azienda per domande, commenti o richieste di ulteriori informazioni riguardanti il bilancio di sostenibilità, includendo indirizzi email, sito web e indirizzi fisici delle sedi principali. |Informazioni di contatto>
             </div>
             <!-- Esempio di dettagli di contatto -->
             <div class="table-placeholder">
@@ -330,7 +330,7 @@ class TemplateManager:
 
         # Build the regex pattern to find the placeholder
         # The pattern looks for <Key| any text |Key>
-        pattern = r'&lt;%s\|.*?\|%s&gt;' % (re.escape(key), re.escape(key))
+        pattern = r'<%s\|.*?\|%s>' % (re.escape(key), re.escape(key))
 
         # Replace the placeholder with the provided content
         new_html_content = re.sub(pattern, content, html_content, flags=re.DOTALL)
