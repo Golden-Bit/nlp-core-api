@@ -2,8 +2,17 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 import os
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permetti tutte le origini
+    allow_credentials=True,
+    allow_methods=["*"],  # Permetti tutti i metodi (GET, POST, OPTIONS, ecc.)
+    allow_headers=["*"],  # Permetti tutti gli headers
+)
 # Specifica la directory che vuoi servire
 DIRECTORY_TO_SERVE = "data"
 
