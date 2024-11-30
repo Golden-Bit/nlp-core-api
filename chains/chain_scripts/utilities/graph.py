@@ -1,4 +1,5 @@
 import os
+import time
 from typing import List, Optional
 from pydantic import BaseModel, Field
 from langchain_core.tools import StructuredTool
@@ -184,6 +185,7 @@ class GraphManager:
         full_path = os.path.join(args.root_dir, args.filename)
         plt.savefig(full_path)
         plt.close()
+        time.sleep(5)
         return f"Line plot saved successfully at {full_path}"
 
     # Metodo per generare un grafico a barre
@@ -206,6 +208,7 @@ class GraphManager:
         full_path = os.path.join(args.root_dir, args.filename)
         plt.savefig(full_path)
         plt.close()
+        time.sleep(5)
         return f"Bar chart saved successfully at {full_path}"
 
     # Metodo per generare un grafico a torta
@@ -229,6 +232,7 @@ class GraphManager:
         full_path = os.path.join(args.root_dir, args.filename)
         plt.savefig(full_path)
         plt.close()
+        time.sleep(5)
         return f"Pie chart saved successfully at {full_path}"
 
     # Metodo per restituire gli strumenti strutturati
