@@ -1,16 +1,30 @@
 import os
-from typing import List, Tuple, Optional
+from typing import List, Optional
 from pydantic import BaseModel, Field
 from langchain_core.tools import StructuredTool
 import matplotlib.pyplot as plt
 
+# Modelli Pydantic per i punti dati
+
+class LinePlotDataPoint(BaseModel):
+    x: float = Field(..., description="Coordinata X del punto.")
+    y: float = Field(..., description="Coordinata Y del punto.")
+
+class BarChartDataPoint(BaseModel):
+    category: str = Field(..., description="Nome della categoria.")
+    value: float = Field(..., description="Valore associato alla categoria.")
+
+class PieChartDataPoint(BaseModel):
+    label: str = Field(..., description="Etichetta per la fetta.")
+    size: float = Field(..., description="Dimensione della fetta.")
+
 # Modelli Pydantic per le funzioni di generazione grafici
 
 class GenerateLinePlotModel(BaseModel):
-    data_points: List[Tuple[float, float]] = Field(
+    data_points: List[LinePlotDataPoint] = Field(
         ...,
         title="Data Points",
-        description="Lista di tuple contenenti i punti (x, y)."
+        description="Lista di punti dati con valori 'x' e 'y'."
     )
     x_label: str = Field(
         ...,
@@ -54,10 +68,10 @@ class GenerateLinePlotModel(BaseModel):
     )
 
 class GenerateBarChartModel(BaseModel):
-    data_points: List[Tuple[str, float]] = Field(
+    data_points: List[BarChartDataPoint] = Field(
         ...,
         title="Data Points",
-        description="Lista di tuple contenenti le categorie e i valori (categoria, valore)."
+        description="Lista di categorie e i loro valori associati."
     )
     x_label: str = Field(
         ...,
@@ -96,10 +110,10 @@ class GenerateBarChartModel(BaseModel):
     )
 
 class GeneratePieChartModel(BaseModel):
-    data_points: List[Tuple[str, float]] = Field(
+    data_points: List[PieChartDataPoint] = Field(
         ...,
         title="Data Points",
-        description="Lista di tuple contenenti le etichette e le dimensioni (etichetta, dimensione)."
+        description="Lista di etichette e dimensioni per le fette della torta."
     )
     plot_title: str = Field(
         ...,
@@ -153,7 +167,8 @@ class GraphManager:
     def generate_line_plot(self, **kwargs):
         """Genera un grafico a linee e lo salva come file PNG."""
         args = GenerateLinePlotModel(**kwargs)
-        x_values, y_values = zip(*args.data_points)
+        x_values = [point.x for point in args.data_points]
+        y_values = [point.y for point in args.data_points]
         plt.figure()
         plt.plot(
             x_values,
@@ -175,11 +190,12 @@ class GraphManager:
     def generate_bar_chart(self, **kwargs):
         """Genera un grafico a barre e lo salva come file PNG."""
         args = GenerateBarChartModel(**kwargs)
-        x_values, y_values = zip(*args.data_points)
+        categories = [point.category for point in args.data_points]
+        values = [point.value for point in args.data_points]
         plt.figure()
         plt.bar(
-            x_values,
-            y_values,
+            categories,
+            values,
             color=args.color,
             edgecolor=args.edgecolor
         )
@@ -196,7 +212,8 @@ class GraphManager:
     def generate_pie_chart(self, **kwargs):
         """Genera un grafico a torta e lo salva come file PNG."""
         args = GeneratePieChartModel(**kwargs)
-        labels, sizes = zip(*args.data_points)
+        labels = [point.label for point in args.data_points]
+        sizes = [point.size for point in args.data_points]
         plt.figure()
         plt.pie(
             sizes,
@@ -255,7 +272,12 @@ if __name__ == "__main__":
 
     # Esempio: Genera un grafico a linee
     line_plot_args = {
-        "data_points": [(1, 2), (2, 3), (3, 5), (4, 7)],
+        "data_points": [
+            {"x": 1, "y": 2},
+            {"x": 2, "y": 3},
+            {"x": 3, "y": 5},
+            {"x": 4, "y": 7}
+        ],
         "x_label": "X-Axis",
         "y_label": "Y-Axis",
         "plot_title": "Sample Line Plot",
@@ -270,7 +292,11 @@ if __name__ == "__main__":
 
     # Esempio: Genera un grafico a barre
     bar_chart_args = {
-        "data_points": [("Category A", 4), ("Category B", 7), ("Category C", 1)],
+        "data_points": [
+            {"category": "Category A", "value": 4},
+            {"category": "Category B", "value": 7},
+            {"category": "Category C", "value": 1}
+        ],
         "x_label": "Categories",
         "y_label": "Values",
         "plot_title": "Sample Bar Chart",
@@ -284,7 +310,11 @@ if __name__ == "__main__":
 
     # Esempio: Genera un grafico a torta
     pie_chart_args = {
-        "data_points": [("Slice A", 30), ("Slice B", 45), ("Slice C", 25)],
+        "data_points": [
+            {"label": "Slice A", "size": 30},
+            {"label": "Slice B", "size": 45},
+            {"label": "Slice C", "size": 25}
+        ],
         "plot_title": "Sample Pie Chart",
         "filename": "pie_chart.png",
         "root_dir": "data/plots",
