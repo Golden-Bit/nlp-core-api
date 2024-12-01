@@ -142,7 +142,7 @@ class TemplateManager:
 <body>
     <!-- Header -->
     <header>
-        <h1>Bilancio di Sostenibilità 2023</h1>
+        <h1>Bilancio di Sostenibilità 2024</h1>
     </header>
 
     <!-- Navigation -->
@@ -199,7 +199,7 @@ class TemplateManager:
 
         <!-- Capitolo 2 -->
         <section id="capitolo2">
-            <h2>Capitolo 2: Up for Our People</h2>
+            <h2>Capitolo 2: Our People</h2>
             <div class="section-banner">
                 <p>Immagine rappresentativa del Capitolo 2</p>
             </div>
@@ -246,7 +246,7 @@ class TemplateManager:
 
         <!-- Capitolo 3 -->
         <section id="capitolo3">
-            <h2>Capitolo 3: Up for Our Planet</h2>
+            <h2>Capitolo 3: Planet</h2>
             <div class="section-banner">
                 <p>Immagine rappresentativa del Capitolo 3</p>
             </div>
@@ -275,7 +275,7 @@ class TemplateManager:
 
         <!-- Capitolo 4 -->
         <section id="capitolo4">
-            <h2>Capitolo 4: Up for Our Growth</h2>
+            <h2>Capitolo 4:Growth</h2>
             <div class="section-banner">
                 <p>Immagine rappresentativa del Capitolo 4</p>
             </div>
