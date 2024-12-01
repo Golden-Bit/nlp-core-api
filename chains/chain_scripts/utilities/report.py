@@ -141,9 +141,10 @@ class TemplateManager:
 </head>
 <body>
     <!-- Header -->
-    <header>
-        <h1>Bilancio di Sostenibilità 2024</h1>
-    </header>
+<header>
+    <h1 style="color: white;">Bilancio di Sostenibilità 2024</h1>
+    <img src="https://static.wixstatic.com/media/63b1fb_3e137ee583724e568424f13468c4d92d~mv2.png/v1/fill/w_434,h_95,al_c,lg_1,q_85,enc_avif,quality_auto/Cattura-BLUEN_PNG_edited.png" alt="Logo" style="position: absolute; top: 20px; right: 20px; height: 50px;">
+</header>
 
     <!-- Navigation -->
     <nav>
