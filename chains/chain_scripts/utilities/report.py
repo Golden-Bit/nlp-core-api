@@ -340,7 +340,7 @@ class TemplateManager:
     <!-- Footer -->
     <footer>
         <p>&copy; 2024 Bluen s.r.l. - Tutti i diritti riservati</p>
-        <img src="https://static.wixstatic.com/media/63b1fb_3e137ee583724e568424f13468c4d92d~mv2.png/v1/fill/w_434,h_95,al_c,lg_1,q_85,enc_avif,quality_auto/Cattura-BLUEN_PNG_edited.png" alt="Logo" style="position: absolute; top: 20px; right: 20px; height: 50px;">
+        <img src="https://static.wixstatic.com/media/63b1fb_3e137ee583724e568424f13468c4d92d~mv2.png/v1/fill/w_434,h_95,al_c,lg_1,q_85,enc_avif,quality_auto/Cattura-BLUEN_PNG_edited.png" alt="Logo" style="position: absolute; bottom: 20px; right: 20px; height: 50px;">
     </footer>
 </body>
 </html>
