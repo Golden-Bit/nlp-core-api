@@ -188,7 +188,7 @@ class TemplateManager:
             </div>
             
             <!-- 1.5 La cultura aziendale -->
-            <h3>1.5 La cultura aziendale</h3>
+            <h3>1.5 Il processo di doppia materialità</h3>
             <div class="content-placeholder">
                 <1.5 Il processo di doppia materialità| La sezione 1.5 Il processo di doppia materialità illustra come l'azienda adotta gli European Sustainability Reporting Standards (ESRS) per analizzare i temi materiali, considerando sia l'impatto dell'azienda su ambiente e società, sia l'influenza dei fattori esterni sulle performance aziendali. Attraverso un'analisi di contesto e il coinvolgimento degli stakeholder, sono stati identificati i temi chiave per la sostenibilità, sintetizzati in una matrice di doppia materialità. La classificazione degli stakeholder e l'uso di questionari dedicati hanno guidato il processo, garantendo un approccio bilaterale e trasparente. Questa metodologia ha permesso di costruire un bilancio di sostenibilità orientato agli obiettivi aziendali e agli SDG delle Nazioni Unite. |1.5 Il processo di doppia materialità>
             </div>
