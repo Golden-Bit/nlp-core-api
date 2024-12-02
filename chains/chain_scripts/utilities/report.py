@@ -146,16 +146,6 @@ class TemplateManager:
          alt="Intestazione" style="width: 100%; height: auto;">
 </header>
 
-    <!-- Navigation -->
-    <nav>
-        <a href="#introduzione">Introduzione</a>
-        <a href="#capitolo1">Capitolo 1</a>
-        <a href="#capitolo2">Capitolo 2</a>
-        <a href="#capitolo3">Capitolo 3</a>
-        <a href="#capitolo4">Capitolo 4</a>
-        <a href="#conclusione">Conclusione</a>
-    </nav>
-
     <!-- Main Content -->
     <main>
         <!-- Introduzione -->
