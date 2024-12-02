@@ -59,91 +59,91 @@ class TemplateManager:
     <meta charset="UTF-8">
     <title>Bilancio di Sostenibilità 2024</title>
     <style>
-        body {{
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            color: #333;
-        }}
-        header, footer {{
-            background-color: #0F9D58;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }}
-        nav {{
-            background-color: #F1F1F1;
-            padding: 10px;
-            text-align: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }}
-        nav a {{
-            margin: 0 15px;
-            color: #0F9D58;
-            text-decoration: none;
-            font-weight: bold;
-        }}
-        main {{
-            padding: 20px;
-        }}
-        h1, h2 {{
-            color: #0F9D58;
-            margin-top: 40px;
-        }}
-        h3 {{
-            color: #333;
-            margin-top: 30px;
-        }}
-        .section-banner {{
-            width: 100%;
-            height: 200px;
-            background-color: #E0E0E0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #757575;
-            font-size: 24px;
-            margin-bottom: 30px;
-        }}
-        .content-placeholder {{
-            background-color: #F9F9F9;
-            padding: 20px;
-            border-left: 5px solid #0F9D58;
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }}
-        .image-placeholder {{
-            width: 100%;
-            height: 300px;
-            background-color: #D3D3D3;
-            margin: 20px 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #666;
-            font-size: 18px;
-        }}
-        .table-placeholder {{
-            width: 100%;
-            background-color: #F0F0F0;
-            padding: 15px;
-            margin: 20px 0;
-            text-align: center;
-            color: #666;
-            font-size: 18px;
-        }}
-        footer {{
-            margin-top: 40px;
-        }}
+    body {{
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        color: #000000;
+    }}
+    header, footer {{
+        background-color: #FFFFFF;
+        color: white;
+        padding: 20px;
+        text-align: center;
+    }}
+    nav {{
+        background-color: #F1F1F1;
+        padding: 10px;
+        text-align: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }}
+    nav a {{
+        margin: 0 15px;
+        color: #000000;
+        text-decoration: none;
+        font-weight: bold;
+    }}
+    main {{
+        padding: 20px;
+    }}
+    h1, h2 {{
+        color: #000000;
+        margin-top: 40px;
+    }}
+    h3 {{
+        color: #000000;
+        margin-top: 30px;
+    }}
+    .section-banner {{
+        width: 100%;
+        height: 200px;
+        background-color: #E0E0E0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #757575;
+        font-size: 24px;
+        margin-bottom: 30px;
+    }}
+    .content-placeholder {{
+        background-color: #F9F9F9;
+        padding: 20px;
+        border-left: 5px solid #000000;
+        margin-bottom: 20px;
+        line-height: 1.6;
+    }}
+    .image-placeholder {{
+        width: 100%;
+        height: 300px;
+        background-color: #D3D3D3;
+        margin: 20px 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #666;
+        font-size: 18px;
+    }}
+    .table-placeholder {{
+        width: 100%;
+        background-color: #F0F0F0;
+        padding: 15px;
+        margin: 20px 0;
+        text-align: center;
+        color: #666;
+        font-size: 18px;
+    }}
+    footer {{
+        margin-top: 40px;
+    }}
     </style>
 </head>
 <body>
     <!-- Header -->
 <header>
-    <h1 style="color: white;">Bilancio di Sostenibilità 2024</h1>
-    <img src="https://static.wixstatic.com/media/63b1fb_3e137ee583724e568424f13468c4d92d~mv2.png/v1/fill/w_434,h_95,al_c,lg_1,q_85,enc_avif,quality_auto/Cattura-BLUEN_PNG_edited.png" alt="Logo" style="position: absolute; top: 20px; right: 20px; height: 50px;">
+    <img src="https://static.wixstatic.com/media/63b1fb_77b5c06b09e64c49803ab947527dbaac~mv2.png" 
+         alt="Intestazione" style="width: 100%; height: auto;">
 </header>
 
     <!-- Navigation -->
@@ -338,10 +338,10 @@ class TemplateManager:
     </main>
 
     <!-- Footer -->
-    <footer>
-        <p>&copy; 2024 Bluen s.r.l. - Tutti i diritti riservati</p>
-        <img src="https://static.wixstatic.com/media/63b1fb_3e137ee583724e568424f13468c4d92d~mv2.png/v1/fill/w_434,h_95,al_c,lg_1,q_85,enc_avif,quality_auto/Cattura-BLUEN_PNG_edited.png" alt="Logo" style="position: absolute; bottom: 20px; right: 20px; height: 50px;">
-    </footer>
+        <footer>
+            <img src="https://static.wixstatic.com/media/63b1fb_b560355ef4a848f7a7ca24148db4cc62~mv2.png"
+                 alt="Intestazione" style="width: 100%; height: auto;">
+        </footer>
 </body>
 </html>
 '''
