@@ -1,3 +1,4 @@
+import base64
 import os
 
 from fastapi import FastAPI, HTTPException, Form, Query, Path, Body, APIRouter
@@ -8,6 +9,8 @@ import uuid
 from pymongo import MongoClient
 
 from langchain_core.documents import Document
+
+from document_loaders.utilities.image2text_llm_loader import ImageDescriptionLoader
 #from langchain_community.document_loaders import PyMuPDFLoader
 from document_loaders.utilities.pymupdf4llm_loader import PyMuPDFLoader
 from langchain_community.document_loaders.csv_loader import CSVLoader
@@ -30,7 +33,8 @@ available_loaders = {
     "TextLoader": TextLoader,
     "BSHTMLLoader": BSHTMLLoader,
     "CSVLoader": CSVLoader,
-    "PyMuPDFLoader": PyMuPDFLoader
+    "PyMuPDFLoader": PyMuPDFLoader,
+    "ImageDescriptionLoader": ImageDescriptionLoader,
 }
 
 
@@ -333,6 +337,101 @@ async def load_documents(
     config = config["config"] if "config" in config else None
     if not config:
         raise HTTPException(status_code=404, detail="Configuration not found")
+
+    # Convert string representation to actual class objects
+    resolved_loader_map = {glob: available_loaders[loader] for glob, loader in config["loader_map"].items()}
+
+    config["loader_map"] = resolved_loader_map
+    del config["config_id"]
+
+    loader_configs[config_id] = CustomDirectoryLoader(**config)
+
+    loader = loader_configs[config_id]
+    documents = loader.load()
+    document_models = [DocumentModel.from_langchain_document(doc) for doc in documents]
+
+    # Save documents to the document store if configured
+    for doc_model in document_models:
+        matched = False
+        if loader.output_store_map:
+            for glob, store_config in loader.output_store_map.items():
+                if glob in doc_model.metadata.get("source", ""):
+                    collection_name = store_config.get("collection_name")
+                    if collection_name:
+                        save_document_to_store(collection_name, doc_model)
+                        matched = True
+                        break
+        if not matched and loader.default_output_store:
+            collection_name = loader.default_output_store.get("collection_name")
+            if collection_name:
+                save_document_to_store(collection_name, doc_model)
+
+    return document_models
+
+
+@router.post("/load_b64_documents/{config_id}", response_model=List[DocumentModel])
+async def load_b64_documents(
+        config_id: str = Path(
+            ...,
+            description="The unique ID of the loader configuration.",
+            example="abcd1234-efgh-5678-ijkl-9012mnop3456"
+        ),
+        documents: List[str] = Form(
+            ...,
+            description="List of files in base64 string format",
+            example=["<base64>", "<base64>"]
+        )
+):
+    """
+    Load documents using a pre-configured loader.
+
+    This endpoint loads documents from a directory using a pre-configured loader,
+    identified by a unique configuration ID. The documents are returned along with
+    their metadata. If configured, documents are also stored in the MongoDB document store.
+
+    This endpoint is designed to provide a flexible document loading mechanism where
+    the configuration can be set up once and reused multiple times for different document
+    loading tasks.
+    """
+
+    #if config_id not in loader_configs:
+    #    raise HTTPException(status_code=404, detail="Configuration not found")
+
+    # Create a temporary directory using a unique UUID for this session
+    temp_dir = f"/tmp/{str(uuid.uuid4())}"
+    os.makedirs(temp_dir, exist_ok=True)
+
+    # List to store the document metadata to be returned
+    #documents_metadata = []
+
+    for doc_b64 in documents:
+        # Generate a unique filename for each document
+        filename = f"{str(uuid.uuid4())}.pdf"  # Assuming PDF files, adjust as needed
+
+        # Save the file to the temporary directory
+        doc_path = os.path.join(temp_dir, filename)
+
+        # Decode the base64 string and save it to the file
+        try:
+            with open(doc_path, "wb") as file:
+                file.write(base64.b64decode(doc_b64))
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to save document: {str(e)}")
+
+        # Store metadata for the document
+        #documents_metadata.append(DocumentModel(filename=filename, path=doc_path))
+
+
+    ####
+
+    config = mongo_client[loaders_db_name].configs.find_one({"_id": config_id})
+    config = config["config"] if "config" in config else None
+    if not config:
+        raise HTTPException(status_code=404, detail="Configuration not found")
+
+
+    # Modify the loader config to point to the new temporary directory
+    config["path"] = temp_dir
 
     # Convert string representation to actual class objects
     resolved_loader_map = {glob: available_loaders[loader] for glob, loader in config["loader_map"].items()}

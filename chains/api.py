@@ -177,6 +177,7 @@ async def get_chain_config(config_id: str = Path(..., description="The unique ID
 
 @router.post("/execute_chain/", response_model=dict)
 async def execute_chain(request: ExecuteChainRequest):
+
     """
     Execute a specific chain.
 
@@ -187,6 +188,11 @@ async def execute_chain(request: ExecuteChainRequest):
     Returns:
     - The result of the chain execution.
     """
+
+    # TODO:
+    #  - integra tracciamento di token e costi
+    #  - integra caricamento automatico dell oggetto se non presente in memoria (default true, da settare mediante input)
+
     try:
         chain = chain_manager.get_chain(request.chain_id)
         result = chain.invoke(request.query, **request.inference_kwargs)
@@ -198,6 +204,10 @@ async def execute_chain(request: ExecuteChainRequest):
 
 @router.post("/stream_chain")
 async def stream_chain(request: ExecuteChainRequest):
+
+    # TODO:
+    #  - integra tracciamento di token e costi
+    #  - integra caricamento automatico dell oggetto se non presente in memoria (default true, da settare mediante input)
 
     async def generate_response(chain: Any, query: Dict[str, Any], inference_kwargs: Dict[str, Any], stream_only_content: bool = False):
 
@@ -228,8 +238,13 @@ async def stream_chain(request: ExecuteChainRequest):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+
 @router.post("/stream_events_chain")
 async def stream_events_chain(request: ExecuteChainRequest):
+
+    # TODO:
+    #  - integra tracciamento di token e costi
+    #  - integra caricamento automatico dell oggetto se non presente in memoria (default true, da settare mediante input)
 
     async def generate_response(chain: Any, query: Dict[str, Any], inference_kwargs: Dict[str, Any], stream_only_content: bool = False):
 

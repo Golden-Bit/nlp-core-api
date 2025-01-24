@@ -37,6 +37,7 @@ class PyMuPDFLoader(BaseLoader):
         self.file_path = file_path
         self.pages = pages
         self.hdr_info = hdr_info
+        self.extract_images = extract_images
         self.write_images = write_images
         self.embed_images = embed_images
         self.image_path = image_path
@@ -65,6 +66,7 @@ class PyMuPDFLoader(BaseLoader):
                 self.file_path,
                 pages=self.pages,
                 hdr_info=self.hdr_info,
+                #extract_images=self.extract_images,
                 write_images=self.write_images,
                 embed_images=self.embed_images,
                 image_path=self.image_path,
@@ -90,6 +92,10 @@ class PyMuPDFLoader(BaseLoader):
             if self.page_chunks:
                 # md_output is a list of page content
                 for page_content in md_output:
+                    #print("#" * 120)
+                    #del page_content["text"]
+                    #print(page_content)
+                    #print("#" * 120)
                     page_text = page_content.get('text', '')
                     page_number = page_content.get('metadata', {}).get('page', None)
                     metadata = {'source': self.file_path}

@@ -72,7 +72,7 @@ class ChainManager:
         "qa_chain": qa_chain,
         "mongodb_chain": mongodb_chain,
         "dataloader_chain": dataloader_chain,
-        "agent_with_tools": agent_with_tools
+        "agent_with_tools": agent_with_tools,
     }
 
     def __init__(self, db_collection):

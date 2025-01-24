@@ -10,6 +10,7 @@ from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain_community.document_loaders.html_bs import BSHTMLLoader
 from langchain_community.document_loaders.text import TextLoader
 from langchain_community.document_loaders.unstructured import UnstructuredFileLoader
+
 from document_loaders.utilities.pymupdf4llm_loader import PyMuPDFLoader
 #from langchain_community.document_loaders.pdf import PyPDFLoader, PyMuPDFLoader
 
@@ -219,38 +220,49 @@ class CustomDirectoryLoader(BaseLoader):
 
 
 if __name__ == "__main__":
+    from document_loaders.utilities.image2text_llm_loader import ImageDescriptionLoader
+
     loader_map = {
         "*.pdf": PyMuPDFLoader,
-        #"*.html": BSHTMLLoader,
-        #"*.csv": CSVLoader,
+        "img.jpg": ImageDescriptionLoader,  # Add support for images
+        "*.png": ImageDescriptionLoader,  # Add PNG support
     }
 
     loader_kwargs_map = {
-        "*-pdf": {},
-        #"*.txt": {"encoding": "utf-8"},
-        #"*.csv": {"csv_args": {"delimiter": ","}},
+        "*.pdf": {
+            "pages": None,
+            "page_chunks": True,
+            "write_images": True,
+            "image_size_limit": 0.025,
+            #"embed_images": True,
+            "image_path": "C:\\Users\\Golden Bit\\Desktop\\projects_in_progress\\GoldenProjects\\golden_bit\\repositories\\nlp-core-api\\tmp",
+        },  # Add arguments for PyMuPDFLoader
+        "img.jpg": {"openai_api_key": "....", "resize_to": (256, 256)},
+        # Arguments for ImageDescriptionLoader
+        "*.png": {"openai_api_key": "....", "resize_to": (256, 256)},
+        # Arguments for ImageDescriptionLoader
     }
 
     metadata_map = {
-        "*.txt": {"bar": 0},
-        "*.html": dict(),
-        "*.csv": {"source": "foo"}
+        "*.pdf": {"type": "document", "source": "PDF files"},
+        "img.jpg": {"type": "image", "source": "Image files"},
+        "*.png": {"type": "image", "source": "Image files"},
     }
 
     loader = CustomDirectoryLoader(
-        path="./source_data_dir",
+        path="C:\\Users\\Golden Bit\\Downloads\\data",
         loader_map=loader_map,
         loader_kwargs_map=loader_kwargs_map,
         metadata_map=metadata_map,
         recursive=True,
-        max_depth=3
+        max_depth=3,
+        show_progress=True,  # Show progress bar
     )
 
     documents = loader.load()
 
     for doc in documents:
-        print(f"File: {doc.metadata['source']}")
-        print(doc.page_content)
-        print(doc.metadata)
+        print(f"File: {doc.metadata.get('source')}, Type: {doc.metadata.get('type')}")
+        print(f"Content: {doc.page_content}")
+        print(f"Metadata: {doc.metadata}")
         print("\n---\n")
-

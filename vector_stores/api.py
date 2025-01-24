@@ -6,8 +6,14 @@ from typing import List, Dict, Any, Optional, Tuple
 from pymongo import MongoClient
 import uuid
 from langchain_core.documents import Document
-from langchain_community.vectorstores import Chroma, ElasticsearchStore, ElasticVectorSearch, FAISS
+from langchain_community.vectorstores import (Chroma,
+                                              ElasticsearchStore,
+                                              ElasticVectorSearch,
+                                              FAISS)
+
 from langchain_community.embeddings import OpenAIEmbeddings, HuggingFaceEmbeddings
+
+from vector_stores.utilities import mongodb_atlas_vector_search
 
 router = APIRouter()
 
@@ -30,7 +36,8 @@ VECTOR_STORE_CLASSES = {
     "Chroma": Chroma,
     "ElasticsearchStore": ElasticsearchStore,
     "ElasticVectorSearch": ElasticVectorSearch,
-    "FAISS": FAISS
+    "FAISS": FAISS,
+    "MongoDBAtlasVectorSearch": mongodb_atlas_vector_search.create_vectorstore
 }
 
 # Mapping of available embeddings models
@@ -293,6 +300,7 @@ def load_vector_store(
         embeddings_model = EMBEDDINGS_MODELS[embeddings_model_class](**embeddings_params)
 
     # Initialize the vector store
+
     vector_store_instance = VECTOR_STORE_CLASSES[vector_store_class](**vector_store_params, embedding_function=embeddings_model)
     vector_stores[store_id] = vector_store_instance
 
