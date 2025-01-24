@@ -13,7 +13,7 @@ from langchain_community.vectorstores import (Chroma,
 
 from langchain_community.embeddings import OpenAIEmbeddings, HuggingFaceEmbeddings
 
-from vector_stores.utilities import mongodb_atlas_vector_search
+#from vector_stores.utilities import mongodb_atlas_vector_search
 
 router = APIRouter()
 
@@ -37,7 +37,7 @@ VECTOR_STORE_CLASSES = {
     "ElasticsearchStore": ElasticsearchStore,
     "ElasticVectorSearch": ElasticVectorSearch,
     "FAISS": FAISS,
-    "MongoDBAtlasVectorSearch": mongodb_atlas_vector_search.create_vectorstore
+    #"MongoDBAtlasVectorSearch": mongodb_atlas_vector_search.create_vectorstore
 }
 
 # Mapping of available embeddings models
