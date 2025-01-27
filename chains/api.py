@@ -12,6 +12,7 @@ from pymongo import MongoClient
 from chains.utilities.chain_manager import ChainManager
 from fastapi.responses import StreamingResponse
 
+from langchain_community.callbacks.manager import get_openai_callback
 
 router = APIRouter()
 MONGO_CONNECTION_STRING = os.getenv('MONGO_CONNECTION_STRING', 'localhost')
@@ -248,45 +249,50 @@ async def stream_events_chain(request: ExecuteChainRequest):
 
     async def generate_response(chain: Any, query: Dict[str, Any], inference_kwargs: Dict[str, Any], stream_only_content: bool = False):
 
-        async for event in chain.astream_events(
-            query,
-            version="v1",
-            **inference_kwargs,
-    ):
-            kind = event["event"]
-            if kind == "on_chain_start":
-                if (
-                        event["name"] == "Agent"
-                ):  # Was assigned when creating the agent with `.with_config({"run_name": "Agent"})`
-                    print(
-                        f"Starting agent: {event['name']} with input: {event['data'].get('input')}"
-                    )
-            elif kind == "on_chain_end":
-                if (
-                        event["name"] == "Agent"
-                ):  # Was assigned when creating the agent with `.with_config({"run_name": "Agent"})`
-                    print()
+        with get_openai_callback() as cb:
+            async for event in chain.astream_events(
+                query,
+                version="v1",
+                **inference_kwargs,
+            ):
+                kind = event["event"]
+                if kind == "on_chain_start":
+                    if (
+                            event["name"] == "Agent"
+                    ):  # Was assigned when creating the agent with `.with_config({"run_name": "Agent"})`
+                        print(
+                            f"Starting agent: {event['name']} with input: {event['data'].get('input')}"
+                        )
+                elif kind == "on_chain_end":
+                    if (
+                            event["name"] == "Agent"
+                    ):  # Was assigned when creating the agent with `.with_config({"run_name": "Agent"})`
+                        print()
+                        print("--")
+                        print(
+                            f"Done agent: {event['name']} with output: {event['data'].get('output')['output']}"
+                        )
+                if kind == "on_chat_model_stream":
+                    content = event["data"]["chunk"].content
+                    if content:
+                        # Empty content in the context of OpenAI means
+                        # that the model is asking for a tool to be invoked.
+                        # So we only print non-empty content
+                        print(content, end="|")
+                        yield content
+                elif kind == "on_tool_start":
                     print("--")
                     print(
-                        f"Done agent: {event['name']} with output: {event['data'].get('output')['output']}"
+                        f"Starting tool: {event['name']} with inputs: {event['data'].get('input')}"
                     )
-            if kind == "on_chat_model_stream":
-                content = event["data"]["chunk"].content
-                if content:
-                    # Empty content in the context of OpenAI means
-                    # that the model is asking for a tool to be invoked.
-                    # So we only print non-empty content
-                    print(content, end="|")
-                    yield content
-            elif kind == "on_tool_start":
-                print("--")
-                print(
-                    f"Starting tool: {event['name']} with inputs: {event['data'].get('input')}"
-                )
-            elif kind == "on_tool_end":
-                print(f"Done tool: {event['name']}")
-                print(f"Tool output was: {event['data'].get('output')}")
-                print("--")
+                elif kind == "on_tool_end":
+                    print(f"Done tool: {event['name']}")
+                    print(f"Tool output was: {event['data'].get('output')}")
+                    print("--")
+
+            print("\n\nToken usage:\n")
+            print(cb)
+            yield cb
 
     try:
         body = request
