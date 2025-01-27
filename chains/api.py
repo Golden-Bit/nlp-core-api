@@ -292,7 +292,7 @@ async def stream_events_chain(request: ExecuteChainRequest):
 
             print("\n\nToken usage:\n")
             print(cb)
-            yield cb
+            #yield cb
 
     try:
         body = request
