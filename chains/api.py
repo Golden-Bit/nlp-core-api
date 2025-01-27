@@ -230,7 +230,7 @@ async def stream_chain(request: ExecuteChainRequest):
                     chunk = json.dumps(chunk, indent=2)
                 yield chunk
                 print("\n\nToken usage:\n")
-                print(str(cb))
+                print(cb)
                 # yield cb
 
     try:
@@ -298,7 +298,7 @@ async def stream_events_chain(request: ExecuteChainRequest):
                     print("--")
 
             print("\n\nToken usage:\n")
-            print(cb)
+            print(str(cb))
             #yield cb
 
     try:
