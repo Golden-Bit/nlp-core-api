@@ -297,9 +297,9 @@ async def stream_events_chain(request: ExecuteChainRequest):
                     print(f"Tool output was: {event['data'].get('output')}")
                     print("--")
 
-                print("\n\nToken usage:\n")
-                print(cb)
-                #yield cb
+            print("\n\nToken usage:\n")
+            print(cb)
+            #yield cb
 
     try:
         body = request

@@ -1,5 +1,6 @@
 from typing import Dict, Any
 
+from langchain_openai import ChatOpenAI
 from pymongo import MongoClient
 from langchain.chains import RetrievalQA
 
@@ -124,7 +125,13 @@ class ChainManager:
 
         elif chain_type == "agent_with_tools":
 
-            llm = get_llm_component(config["llm_id"])
+            #llm = get_llm_component(config["llm_id"])
+            llm = ChatOpenAI(
+                api_key="...",
+                model="gpt-4o",
+                temperature=0,
+                stream_usage=True,
+            )
             system_message = config["system_message"]
             tools = config["tools"]
 
