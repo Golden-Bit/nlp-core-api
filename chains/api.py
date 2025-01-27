@@ -196,8 +196,11 @@ async def execute_chain(request: ExecuteChainRequest):
 
     try:
         chain = chain_manager.get_chain(request.chain_id)
-        result = chain.invoke(request.query, **request.inference_kwargs)
-        print(result)
+        with get_openai_callback() as cb:
+            result = chain.invoke(request.query, **request.inference_kwargs)
+            print(result)
+            print("\n\nToken usage:\n")
+            print(cb)
         return result
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -211,20 +214,23 @@ async def stream_chain(request: ExecuteChainRequest):
     #  - integra caricamento automatico dell oggetto se non presente in memoria (default true, da settare mediante input)
 
     async def generate_response(chain: Any, query: Dict[str, Any], inference_kwargs: Dict[str, Any], stream_only_content: bool = False):
+        with get_openai_callback() as cb:
+            async for chunk in chain.astream(query, **inference_kwargs):
 
-        async for chunk in chain.astream(query, **inference_kwargs):
-
-            try:
-                print("#"*120)
-                print(chunk)
-                print("#" * 120)
-                chunk = json.dumps(chunk, indent=2)
-            except Exception as e:
-                #print(e)
-                print(chunk)
-                chunk = {"error": "output object not serializable"}
-                chunk = json.dumps(chunk, indent=2)
-            yield chunk
+                try:
+                    print("#"*120)
+                    print(chunk)
+                    print("#" * 120)
+                    chunk = json.dumps(chunk, indent=2)
+                except Exception as e:
+                    #print(e)
+                    print(chunk)
+                    chunk = {"error": "output object not serializable"}
+                    chunk = json.dumps(chunk, indent=2)
+                yield chunk
+                print("\n\nToken usage:\n")
+                print(cb)
+                # yield cb
 
     try:
         body = request
