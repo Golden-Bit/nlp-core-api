@@ -125,13 +125,7 @@ class ChainManager:
 
         elif chain_type == "agent_with_tools":
 
-            #llm = get_llm_component(config["llm_id"])
-            llm = ChatOpenAI(
-                api_key="...",
-                model="gpt-4o",
-                temperature=0,
-                stream_usage=True,
-            )
+            llm = get_llm_component(config["llm_id"])
             system_message = config["system_message"]
             tools = config["tools"]
 
