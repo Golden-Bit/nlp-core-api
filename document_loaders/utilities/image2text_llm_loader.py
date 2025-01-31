@@ -106,9 +106,11 @@ class ImageDescriptionLoader(BaseLoader):
                 # Encode image to base64
                 image_base64 = self.image_description_function.encode_image_to_base64(processed_image_path)
 
+                os.remove(processed_image_path)
+
                 # Generate the description
                 human_content = [
-                    {"type": "text", "text": "Descrivi l'immagine fornita. Non generare analisi mediche."},
+                    {"type": "text", "text": "Descrivi l'immagine fornita."},
                     {"type": "image_url", "image_url": {"url": image_base64, "detail": "auto"}}
                 ]
 
