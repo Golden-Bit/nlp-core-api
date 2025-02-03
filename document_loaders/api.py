@@ -9,7 +9,7 @@ import uuid
 from pymongo import MongoClient
 
 from langchain_core.documents import Document
-
+from langchain_unstructured import UnstructuredLoader
 from document_loaders.utilities.image2text_llm_loader import ImageDescriptionLoader
 #from langchain_community.document_loaders import PyMuPDFLoader
 from document_loaders.utilities.pymupdf4llm_loader import PyMuPDFLoader
@@ -35,6 +35,7 @@ available_loaders = {
     "CSVLoader": CSVLoader,
     "PyMuPDFLoader": PyMuPDFLoader,
     "ImageDescriptionLoader": ImageDescriptionLoader,
+    "UnstructuredLoader": UnstructuredLoader
 }
 
 
