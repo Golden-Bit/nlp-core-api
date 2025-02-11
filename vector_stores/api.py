@@ -12,7 +12,7 @@ from langchain_community.vectorstores import (Chroma,
                                               FAISS)
 
 from langchain_community.embeddings import OpenAIEmbeddings, HuggingFaceEmbeddings
-
+from langchain_community.vectorstores.utils import filter_complex_metadata
 #from vector_stores.utilities import mongodb_atlas_vector_search
 
 router = APIRouter()
@@ -453,12 +453,23 @@ async def add_documents_from_document_store(
     vector_store_instance = vector_stores[store_id]
     document_collection_instance = get_document_collection(document_collection)
 
+    # Recupera i documenti dal document store
     documents_cursor = document_collection_instance.find()
 
-    documents = [DocumentModel(page_content=doc["value"]["page_content"], metadata=doc["value"]["metadata"]).to_langchain_document() for doc in documents_cursor]
+    # Converte i documenti nel formato richiesto
+    documents = [
+        DocumentModel(
+            page_content=doc["value"]["page_content"],
+            metadata=doc["value"]["metadata"]
+        ).to_langchain_document()
+        for doc in documents_cursor
+    ]
 
-    # Add documents to vector store
-    vector_store_instance.add_documents(documents)
+    # Filtra i metadati complessi
+    filtered_documents = filter_complex_metadata(documents)
+
+    # Aggiunge i documenti filtrati al vector store
+    vector_store_instance.add_documents(filtered_documents)
 
     return {"detail": f"Documents from collection {document_collection} added to vector store {store_id} successfully"}
 
