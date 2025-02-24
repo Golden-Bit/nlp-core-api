@@ -46,7 +46,7 @@ class VideoDescriptionLoader(BaseLoader):
         num_frames: Optional[int] = None,
         frame_rate: Optional[int] = None,
         openai_api_key: str = "",
-        postprocess: Optional[callable] = None,
+        #postprocess: Optional[callable] = None,
         supported_formats: Optional[List[str]] = None
     ):
         """
@@ -67,7 +67,7 @@ class VideoDescriptionLoader(BaseLoader):
         self.resize_to = resize_to
         self.num_frames = num_frames
         self.frame_rate = frame_rate
-        self.postprocess = postprocess
+        #self.postprocess = postprocess
         self.supported_formats = supported_formats or [".mp4", ".avi", ".mov"]
 
         # Initialize the Chat model with the given API key and parameters.
@@ -244,10 +244,7 @@ class VideoDescriptionLoader(BaseLoader):
         """
         return list(self.lazy_load())
 
-if __name__ == "__main__":
-    # Esempio di utilizzo:
-    # Definisci, se necessario, una funzione di postprocess (qui non obbligatoria, poiché il parsing è già gestito)
-    def custom_postprocess(output: str) -> str:
+    def custom_postprocess(self, output: str) -> str:
         start_tag = "<attribute=frame_description|"
         end_tag = "| attribute=frame_description>"
         start_idx = output.find(start_tag)
@@ -261,6 +258,11 @@ if __name__ == "__main__":
         except json.JSONDecodeError:
             raise ValueError("Errore nel parsing del contenuto JSON.")
 
+if __name__ == "__main__":
+    # Esempio di utilizzo:
+    # Definisci, se necessario, una funzione di postprocess (qui non obbligatoria, poiché il parsing è già gestito)
+
+
     # Inizializza il loader con il percorso del video (oppure specifica video_dir) e altri parametri desiderati
     loader = VideoDescriptionLoader(
         file_path="C:\\Users\\info\\OneDrive\\Desktop\\work_space\\repositories\\nlp-core-api\\document_loaders\\utilities\\test_video.mp4",  # Sostituire con il percorso del video
@@ -268,7 +270,7 @@ if __name__ == "__main__":
         num_frames=5,              # Numero di frame da estrarre (opzionale)
         # frame_rate=2,           # In alternativa, specificare un frame_rate
         openai_api_key="...",      # Inserisci la tua API key OpenAI
-        postprocess=custom_postprocess  # Funzione di postprocess opzionale
+        #postprocess=custom_postprocess  # Funzione di postprocess opzionale
     )
 
     # Carica i Document generati
