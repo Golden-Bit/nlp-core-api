@@ -39,8 +39,8 @@ class VideoDescriptionLoader(BaseLoader):
     """
     def __init__(
         self,
+        file_path: Optional[str] = None,
         model_name: str = "gpt-4o",
-        video_path: Optional[str] = None,
         video_dir: Optional[str] = None,
         resize_to: Optional[Tuple[int, int]] = None,
         num_frames: Optional[int] = None,
@@ -53,7 +53,7 @@ class VideoDescriptionLoader(BaseLoader):
         Initialize the VideoDescriptionLoader with the specified parameters.
 
         Args:
-            video_path: Optional; Path to a single video file.
+            file_path: Optional; Path to a single video file.
             video_dir: Optional; Path to a directory containing video files.
             resize_to: Optional; Tuple specifying (width, height) for resizing extracted frames.
             num_frames: Optional; If provided, extract this number of frames uniformly distributed.
@@ -62,7 +62,7 @@ class VideoDescriptionLoader(BaseLoader):
             postprocess: Optional function to process the LLM output.
             supported_formats: List of supported video file extensions (e.g., [".mp4", ".avi", ".mov"]).
         """
-        self.video_path = video_path
+        self.file_path = file_path
         self.video_dir = video_dir
         self.resize_to = resize_to
         self.num_frames = num_frames
@@ -83,12 +83,12 @@ class VideoDescriptionLoader(BaseLoader):
         Retrieves a list of supported video files from the provided video_path or video_dir.
         """
         files = []
-        if self.video_path:
-            ext = os.path.splitext(self.video_path)[1].lower()
+        if self.file_path:
+            ext = os.path.splitext(self.file_path)[1].lower()
             if ext in self.supported_formats:
-                files.append(self.video_path)
+                files.append(self.file_path)
             else:
-                raise ValueError(f"Unsupported video format: {self.video_path}")
+                raise ValueError(f"Unsupported video format: {self.file_path}")
         elif self.video_dir:
             for f in os.listdir(self.video_dir):
                 if os.path.splitext(f)[1].lower() in self.supported_formats:
@@ -263,7 +263,7 @@ if __name__ == "__main__":
 
     # Inizializza il loader con il percorso del video (oppure specifica video_dir) e altri parametri desiderati
     loader = VideoDescriptionLoader(
-        video_path="C:\\Users\\info\\OneDrive\\Desktop\\work_space\\repositories\\nlp-core-api\\document_loaders\\utilities\\test_video.mp4",  # Sostituire con il percorso del video
+        file_path="C:\\Users\\info\\OneDrive\\Desktop\\work_space\\repositories\\nlp-core-api\\document_loaders\\utilities\\test_video.mp4",  # Sostituire con il percorso del video
         resize_to=(256, 256),      # Dimensione per il resize dei frame
         num_frames=5,              # Numero di frame da estrarre (opzionale)
         # frame_rate=2,           # In alternativa, specificare un frame_rate
