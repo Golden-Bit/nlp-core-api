@@ -12,10 +12,13 @@ from langchain_community.document_loaders.text import TextLoader
 from langchain_community.document_loaders.unstructured import UnstructuredFileLoader
 
 from document_loaders.utilities.pymupdf4llm_loader import PyMuPDFLoader
+from document_loaders.utilities.video2text_llm_loader import VideoDescriptionLoader
+from document_loaders.utilities.image2text_llm_loader import ImageDescriptionLoader
+
 #from langchain_community.document_loaders.pdf import PyPDFLoader, PyMuPDFLoader
 
 FILE_LOADER_TYPE = Union[
-    Type[UnstructuredFileLoader], Type[TextLoader], Type[BSHTMLLoader], Type[CSVLoader], Type[PyMuPDFLoader]
+    Type[UnstructuredFileLoader], Type[TextLoader], Type[BSHTMLLoader], Type[CSVLoader], Type[PyMuPDFLoader], Type[ImageDescriptionLoader], Type[VideoDescriptionLoader]
 ]
 logger = logging.getLogger(__name__)
 

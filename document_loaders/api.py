@@ -17,6 +17,7 @@ from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain_community.document_loaders.html_bs import BSHTMLLoader
 from langchain_community.document_loaders.text import TextLoader
 from document_loaders.utilities.custom_directory_loader import CustomDirectoryLoader
+from document_loaders.utilities.video2text_llm_loader import VideoDescriptionLoader
 
 router = APIRouter()
 
@@ -35,7 +36,8 @@ available_loaders = {
     "CSVLoader": CSVLoader,
     "PyMuPDFLoader": PyMuPDFLoader,
     "ImageDescriptionLoader": ImageDescriptionLoader,
-    "UnstructuredLoader": UnstructuredLoader
+    "UnstructuredLoader": UnstructuredLoader,
+    "VideoDescriptionLoader": VideoDescriptionLoader
 }
 
 
