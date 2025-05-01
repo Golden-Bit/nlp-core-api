@@ -326,15 +326,41 @@ async def get_file_versions(file_id: str):
     return {"detail": "Versioning not implemented yet"}
 
 
-@router.get("/directories", response_model=List[DirectoryMetadata],
-         responses={400: {"description": "Bad Request"}, 500: {"description": "Internal Server Error"}})
-async def list_directories():
+@router.get(
+    "/directories",
+    response_model=List[DirectoryMetadata],
+    responses={
+        400: {"description": "Bad Request"},
+        500: {"description": "Internal Server Error"},
+    },
+)
+async def list_directories(
+    prefix: Optional[str] = Query(
+        None,
+        description="Se fornito, restituisce solo le directory il cui path inizia con questo prefisso.",
+    )
+):
     """
-    List all directories in the storage. This endpoint returns metadata for all directories stored on the server.
+    List all directories (or only those starting with *prefix*).
+
+    - **prefix** (opzionale): stringa usata per filtrare i path delle directory.
     """
     directories = file_storage.list_directories()
-    metadata_list = [DirectoryMetadata(path=dir, custom_metadata=file_storage.get_directory_metadata(dir)) for dir in
-                     directories]
+
+    # Applica il filtro, se richiesto
+    if prefix:
+        # normalizza eventuali back-slash → slash per coerenza
+        norm_prefix = prefix.replace("\\", "/")
+        directories = [d for d in directories if d.startswith(norm_prefix)]
+
+    # Costruisci la risposta con i metadati
+    metadata_list = [
+        DirectoryMetadata(
+            path=dir_path,
+            custom_metadata=file_storage.get_directory_metadata(dir_path),
+        )
+        for dir_path in directories
+    ]
     return metadata_list
 
 
