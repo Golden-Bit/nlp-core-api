@@ -222,6 +222,41 @@ async def save_file_metadata(
     metadata = file_storage.get_file_metadata(file_id)
     return metadata
 
+@router.put(
+    "/file/metadata/{file_id:path}",
+    response_model=FileMetadata,
+    responses={
+        404: {"description": "File Not Found"},
+        400: {"description": "Bad Request"},
+        500: {"description": "Internal Server Error"},
+    },
+)
+async def update_file_metadata(
+    file_id: str = Path(..., description="Percorso del file da aggiornare"),
+    file_description: Optional[str] = Form(None, description="Descrizione (merge)"),
+    extra_metadata: Optional[str] = Form(None, description="Metadati extra in JSON"),
+):
+    """
+    Aggiorna (merge) i metadati personalizzati di un file.
+    Se non esiste ancora un record di metadati, viene creato automaticamente.
+    """
+    if not file_storage.get_file(file_id):
+        raise HTTPException(status_code=404, detail="File not found")
+
+    custom_metadata: Dict[str, Any] = {}
+    if file_description is not None:
+        custom_metadata["file_description"] = file_description
+    if extra_metadata:
+        try:
+            custom_metadata.update(json.loads(extra_metadata))
+        except json.JSONDecodeError:
+            raise HTTPException(status_code=400, detail="extra_metadata non è JSON valido")
+
+    # *** richiama il nuovo metodo ***
+    file_storage.update_file_metadata(file_id, custom_metadata)
+
+    metadata = file_storage.get_file_metadata(file_id)
+    return FileMetadata(**metadata)
 
 @router.delete("/delete/{file_id:path}",
             responses={404: {"description": "File Not Found"}, 400: {"description": "Bad Request"},
@@ -328,6 +363,43 @@ async def save_directory_metadata(
         custom_metadata.update(json.loads(extra_metadata))
     file_storage.save_directory_metadata(directory, custom_metadata)
     return DirectoryMetadata(path=directory, custom_metadata=custom_metadata)
+
+@router.put(
+    "/directory/metadata/{directory_id:path}",
+    response_model=DirectoryMetadata,
+    responses={
+        404: {"description": "Directory Not Found"},
+        400: {"description": "Bad Request"},
+        500: {"description": "Internal Server Error"},
+    },
+)
+async def update_directory_metadata(
+    directory_id: str = Path(..., description="Percorso della directory da aggiornare"),
+    description: Optional[str] = Form(None, description="Nuova descrizione"),
+    extra_metadata: Optional[str] = Form(None, description="Metadati extra in JSON"),
+):
+    """
+    Aggiorna (merge) i metadati di una directory esistente.
+    Se non esistono metadati, vengono creati.
+    """
+    dir_path = root_path / directory_id
+    if not dir_path.exists() or not dir_path.is_dir():
+        raise HTTPException(status_code=404, detail="Directory not found")
+
+    # Costruisci dizionario dei nuovi metadati
+    custom_metadata: Dict[str, Any] = {}
+    if description is not None:
+        custom_metadata["description"] = description
+    if extra_metadata:
+        try:
+            custom_metadata.update(json.loads(extra_metadata))
+        except json.JSONDecodeError:
+            raise HTTPException(status_code=400, detail="extra_metadata non è JSON valido")
+
+    # *** richiama il nuovo metodo ***
+    file_storage.update_directory_metadata(directory_id, custom_metadata)
+
+    return DirectoryMetadata(path=directory_id, custom_metadata=custom_metadata)
 
 
 @router.get("/search/files",

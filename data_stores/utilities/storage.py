@@ -133,6 +133,36 @@ class FileStorage:
         metadata_store[file_id]['custom_metadata'] = custom_metadata
         self._save_metadata_store(metadata_store)
 
+    def update_file_metadata(
+        self, file_id: str, custom_metadata: Dict[str, Any]
+    ) -> None:
+        """
+        Aggiorna (merge) i metadati personalizzati di un file.
+        Se il record non esiste ancora in metadata.json, viene creato
+        partendo dai metadati “di base” del file sul filesystem.
+        """
+        metadata_store = self._load_metadata_store()
+
+        # Recupera record corrente (se manca, prova a generarlo da zero)
+        if file_id not in metadata_store:
+            base_meta = self.get_file_metadata(file_id)
+            if not base_meta:
+                raise KeyError(
+                    f"File '{file_id}' non trovato sul filesystem; impossibile "
+                    "creare metadati."
+                )
+            metadata_store[file_id] = base_meta
+
+        # Inizializza struttura custom se assente o non-dict
+        existing_custom = metadata_store[file_id].get("custom_metadata", {})
+        if not isinstance(existing_custom, dict):
+            existing_custom = {}
+
+        # Merge: i valori nuovi sovrascrivono quelli vecchi
+        merged = {**existing_custom, **custom_metadata}
+        metadata_store[file_id]["custom_metadata"] = merged
+        self._save_metadata_store(metadata_store)
+
     def get_file_metadata(self, key: str) -> dict:
         """
         Retrieve the metadata of a specific file.
@@ -169,6 +199,23 @@ class FileStorage:
         """
         metadata_store = self._load_metadata_store()
         metadata_store[directory] = custom_metadata
+        self._save_metadata_store(metadata_store)
+
+    def update_directory_metadata(
+        self, directory: str, custom_metadata: Dict[str, Any]
+    ) -> None:
+        """
+        Aggiorna (merge) i metadati di una directory.
+        Se la directory non ha metadati, li crea da zero.
+        """
+        metadata_store = self._load_metadata_store()
+        existing = metadata_store.get(directory, {})
+        if not isinstance(existing, dict):
+            existing = {}
+
+        # Merge (new keys overwrite old ones)
+        merged = {**existing, **custom_metadata}
+        metadata_store[directory] = merged
         self._save_metadata_store(metadata_store)
 
     def get_directory_metadata(self, directory: str) -> dict:
