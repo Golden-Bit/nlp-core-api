@@ -1,5 +1,5 @@
 from pathlib import Path
-from fastapi import FastAPI, UploadFile, File, HTTPException, Form, Query, APIRouter, ApiPath
+from fastapi import FastAPI, UploadFile, File, HTTPException, Form, Query, APIRouter
 from fastapi.responses import FileResponse, HTMLResponse
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
@@ -10,6 +10,7 @@ import mimetypes
 from PyPDF2 import PdfFileReader
 from io import BytesIO
 from docx import Document as DocxDocument
+from fastapi import Path as ApiPath
 
 router = APIRouter()
 
