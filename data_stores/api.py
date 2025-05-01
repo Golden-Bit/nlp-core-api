@@ -1,5 +1,5 @@
 from pathlib import Path
-from fastapi import FastAPI, UploadFile, File, HTTPException, Form, Query, APIRouter
+from fastapi import FastAPI, UploadFile, File, HTTPException, Form, Query, APIRouter, ApiPath
 from fastapi.responses import FileResponse, HTMLResponse
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
@@ -232,7 +232,7 @@ async def save_file_metadata(
     },
 )
 async def update_file_metadata(
-    file_id: str = Path(..., description="Percorso del file da aggiornare"),
+    file_id: str = ApiPath(..., description="Percorso del file da aggiornare"),
     file_description: Optional[str] = Form(None, description="Descrizione (merge)"),
     extra_metadata: Optional[str] = Form(None, description="Metadati extra in JSON"),
 ):
@@ -374,7 +374,7 @@ async def save_directory_metadata(
     },
 )
 async def update_directory_metadata(
-    directory_id: str = Path(..., description="Percorso della directory da aggiornare"),
+    directory_id: str = ApiPath(..., description="Percorso della directory da aggiornare"),
     description: Optional[str] = Form(None, description="Nuova descrizione"),
     extra_metadata: Optional[str] = Form(None, description="Metadati extra in JSON"),
 ):
