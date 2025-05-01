@@ -12,7 +12,7 @@ import os
 import requests
 from pprint import pprint
 
-BASE_URL = "http://127.0.0.1:8100/data_stores"
+BASE_URL = "http://35.205.92.199:8097/llm-core/data_stores"
 
 # ----------------------------------------------------------------------
 # 1. Crea directory con metadati
@@ -29,7 +29,7 @@ resp = requests.post(
 )
 resp.raise_for_status()
 pprint(resp.json())  # DirectoryMetadata
-
+print(resp.json())
 # ----------------------------------------------------------------------
 # 2. Leggi metadati directory
 # ----------------------------------------------------------------------
@@ -37,6 +37,7 @@ print("\n2) Recupero i metadati della directory ...")
 resp = requests.get(f"{BASE_URL}/directories")
 resp.raise_for_status()
 # Filtra solo la nostra
+print(resp.json())
 dir_meta = next(d for d in resp.json() if d["path"] == dir_path)
 pprint(dir_meta)
 

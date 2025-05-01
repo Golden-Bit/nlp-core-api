@@ -233,17 +233,19 @@ class FileStorage:
 
     def list_directories(self) -> List[str]:
         """
-        List all directories in the storage.
-
-        Returns:
-            List[str]: A list of directory paths.
+        Elenca *solo* le directory registrate nel metadata store,
+        indipendentemente dal fatto che contengano file o meno.
         """
-        directories = set()
-        for key in self.store.yield_keys():
-            directory = os.path.dirname(key)
-            if directory:
-                directories.add(directory)
-        return list(directories)
+        metadata_store = self._load_metadata_store()
+
+        # Filtra i record che NON hanno la chiave "size" (=> sono directory)
+        directories = [
+            key
+            for key, meta in metadata_store.items()
+            if isinstance(meta, dict) and "size" not in meta
+        ]
+
+        return sorted(directories)
 
     def delete_directory_metadata(self, directory: str) -> None:
         """
