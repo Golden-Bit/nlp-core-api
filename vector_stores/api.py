@@ -124,8 +124,8 @@ def _process_add_docs_from_store_job(store_id: str,
 class TaskInfo(BaseModel):
     id: str
     status: str
-    endpoint: str
-    payload: dict
+    endpoint: Optional[str] = None
+    payload: Optional[dict] = None
     result: Optional[Any] = None
     error: Optional[str] = None
 
