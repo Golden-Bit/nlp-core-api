@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from fastapi import FastAPI, HTTPException, Path, Body, Query, APIRouter,BackgroundTasks
+from fastapi import FastAPI, HTTPException, Path, Body, Query, APIRouter,BackgroundTasks, Form
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any, Optional, Tuple
 from pymongo import MongoClient
@@ -754,14 +754,17 @@ async def add_documents_from_document_store_async(
     store_id: str = Path(...,
                          description="ID del vector store già caricato"),
     document_collection: str = Query(...,
-                                     description="Nome della collezione nel document store")
+                                     description="Nome della collezione nel document store"),
+    task_id: Optional[str] = Query(None, description="Task ID")
 ):
     """
     Variante non-bloccante di **/add_documents_from_store/{store_id}**.\n
     Restituisce subito `task_id` che può essere interrogato con
     **/vector_store/task_status/{task_id}**.
     """
-    task_id = str(uuid.uuid4())
+
+    task_id = str(uuid.uuid4()) if not task_id else task_id
+
     _create_task_record(
         task_id,
         endpoint=f"/vector_store/add_documents_from_store_async/{store_id}",

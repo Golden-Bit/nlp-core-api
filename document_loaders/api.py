@@ -682,13 +682,18 @@ async def delete_config(
 @router.post("/load_documents_async/{config_id}", response_model=dict)
 async def load_documents_async(
     background_tasks: BackgroundTasks,
-    config_id: str = Path(..., description="Loader configuration ID")
+    config_id: str = Path(..., description="Loader configuration ID"),
+    task_id: Optional[str] = Form(None, description="Task ID")
 ):
+
     """
     Avvia il caricamento dei documenti in background e
     restituisce subito task_id e stato iniziale.
     """
-    task_id = str(uuid.uuid4())
+    print(task_id)
+    task_id = str(uuid.uuid4()) if not task_id else task_id
+    print(task_id)
+
     _create_task_record(
         task_id=task_id,
         endpoint="load_documents_async",
@@ -706,13 +711,15 @@ async def load_documents_async(
 async def load_b64_documents_async(
     background_tasks: BackgroundTasks,
     config_id: str = Path(..., description="Loader configuration ID"),
-    documents: List[str] = Form(..., description="Lista di file in base64")
+    documents: List[str] = Form(..., description="Lista di file in base64"),
+    task_id: Optional[str] = Form(None, description="Task ID")
 ):
     """
     Variante che accetta file base-64: avvia il job in background
     mantenendo identica la firma di input.
     """
-    task_id = str(uuid.uuid4())
+    task_id = str(uuid.uuid4()) if not task_id else task_id
+
     _create_task_record(
         task_id=task_id,
         endpoint="load_b64_documents_async",
@@ -731,7 +738,7 @@ async def load_b64_documents_async(
 async def get_task_status(
     task_id: str = Path(..., description="ID del job restituito alla creazione")
 ):
-    record = mongo_client[loaders_db_name].tasks.find_one({"id": task_id})
+    record = mongo_client[loaders_db_name]["tasks"].find_one({"id": task_id})
     if not record:
         raise HTTPException(status_code=404, detail="Task not found")
 
