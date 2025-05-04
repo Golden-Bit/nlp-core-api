@@ -1,6 +1,6 @@
 import os
-
-from fastapi import FastAPI, HTTPException, Path, Body, Query, APIRouter
+from datetime import datetime
+from fastapi import FastAPI, HTTPException, Path, Body, Query, APIRouter,BackgroundTasks
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any, Optional, Tuple
 from pymongo import MongoClient
@@ -45,6 +45,89 @@ EMBEDDINGS_MODELS = {
     "OpenAIEmbeddings": OpenAIEmbeddings,
     "HuggingFaceEmbeddings": HuggingFaceEmbeddings,
 }
+
+########################################################################################################################
+# ----------------- TASK HELPERS ----------------
+def _create_task_record(task_id: str,
+                        endpoint: str,
+                        payload: Dict[str, Any]) -> None:
+    """
+    Inserisce un task con stato PENDING nella collezione `tasks`.
+    """
+    client[db_name]["tasks"].insert_one({
+        "id": task_id,         # chiave pubblica leggibile
+        "endpoint": endpoint,
+        "payload": payload,
+        "status": "PENDING",
+        "created_at": datetime.utcnow(),
+        "finished_at": None,
+        "result": None,
+        "error": None
+    })
+
+def _update_task_status(task_id: str,
+                        status: str,
+                        *,
+                        result: Optional[Any] = None,
+                        error: Optional[str] = None) -> None:
+    client[db_name]["tasks"].update_one(
+        {"id": task_id},
+        {"$set": {
+            "status": status,
+            "finished_at": (
+                datetime.utcnow() if status in ("DONE", "ERROR") else None
+            ),
+            "result": result,
+            "error": error
+        }}
+    )
+########################################################################################################################
+
+########################################################################################################################
+# ---------------- BACKGROUND WORKER ------------
+def _process_add_docs_from_store_job(store_id: str,
+                                     task_id: str,
+                                     document_collection: str) -> None:
+    """
+    Implementa la logica originale di add_documents_from_document_store
+    ma aggiorna lo stato del task in Mongo.
+    """
+    try:
+        _update_task_status(task_id, "RUNNING")
+
+        # ---- validazioni ----
+        if store_id not in vector_stores:
+            raise RuntimeError("Vector store not loaded in memory")
+
+        vector_store_instance = vector_stores[store_id]
+        doc_coll = get_document_collection(document_collection)
+
+        docs_cursor = doc_coll.find()
+        docs = [DocumentModel(
+                    page_content=d["value"]["page_content"],
+                    metadata=d["value"]["metadata"]
+                ).to_langchain_document()
+                for d in docs_cursor]
+
+        filtered_docs = filter_complex_metadata(docs)
+        vector_store_instance.add_documents(filtered_docs)
+
+        # memorizza breve riepilogo risultato
+        _update_task_status(task_id, "DONE",
+                            result={"added": len(filtered_docs)})
+    except Exception as exc:            # pragma: no cover
+        _update_task_status(task_id, "ERROR", error=str(exc))
+
+########################################################################################################################
+
+
+class TaskInfo(BaseModel):
+    id: str
+    status: str
+    endpoint: str
+    payload: dict
+    result: Optional[Any] = None
+    error: Optional[str] = None
 
 
 class ExecuteMethodRequest(BaseModel):
@@ -658,6 +741,57 @@ async def get_vector_store_attribute(request: GetAttributeRequest):
         return {"attribute": attribute}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+########################################################################################################################
+
+@router.post(
+    "/vector_store/add_documents_from_store_async/{store_id}",
+    response_model=dict,
+    summary="Avvia in background l’import da document store"
+)
+async def add_documents_from_document_store_async(
+    background_tasks: BackgroundTasks,
+    store_id: str = Path(...,
+                         description="ID del vector store già caricato"),
+    document_collection: str = Query(...,
+                                     description="Nome della collezione nel document store")
+):
+    """
+    Variante non-bloccante di **/add_documents_from_store/{store_id}**.\n
+    Restituisce subito `task_id` che può essere interrogato con
+    **/vector_store/task_status/{task_id}**.
+    """
+    task_id = str(uuid.uuid4())
+    _create_task_record(
+        task_id,
+        endpoint=f"/vector_store/add_documents_from_store_async/{store_id}",
+        payload={"store_id": store_id,
+                 "document_collection": document_collection},
+    )
+    background_tasks.add_task(
+        _process_add_docs_from_store_job,
+        store_id=store_id,
+        task_id=task_id,
+        document_collection=document_collection,
+    )
+    return {"task_id": task_id, "status": "PENDING"}
+
+
+@router.get(
+    "/vector_store/task_status/{task_id}",
+    response_model=TaskInfo,
+    summary="Stato corrente di un job lanciato in background"
+)
+async def get_task_status(
+    task_id: str = Path(..., description="ID restituito dall’endpoint async")
+):
+    task = client[db_name]["tasks"].find_one({"id": task_id})
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    return TaskInfo(**task)
+
+########################################################################################################################
 
 
 if __name__ == "__main__":

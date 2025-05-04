@@ -75,6 +75,7 @@ def _update_task_status(task_id: str,
         }}
     )
 ########################################################################################################################
+# ---------------- BACKGROUND WORKERS ------------
 
 def _process_loader_job(config_id: str, task_id: str) -> None:
     """
