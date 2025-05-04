@@ -65,7 +65,7 @@ def _update_task_status(task_id: str,
                         *,
                         result: Optional[List[dict]] = None,
                         error: Optional[str] = None) -> None:
-    mongo_client[loaders_db_name].tasks.update_one(
+    res = mongo_client[loaders_db_name].tasks.update_one(
         {"id": task_id},                 # <-- ora filtra su `id`
         {"$set": {
             "status": status,
@@ -76,6 +76,9 @@ def _update_task_status(task_id: str,
             "error": error
         }}
     )
+
+    print(res)
+
 ########################################################################################################################
 # ---------------- BACKGROUND WORKERS ------------
 
@@ -90,8 +93,6 @@ def _process_loader_job(config_id: str, task_id: str) -> None:
         config_doc = mongo_client[loaders_db_name].configs.find_one({"_id": config_id})
         if not config_doc:
             raise RuntimeError("Configuration not found")
-
-        input("...")
 
         cfg = config_doc["config"]
         # risolvi le classi dei loader
@@ -710,7 +711,7 @@ async def load_documents_async(
         config_id=config_id,
         task_id=task_id
     )
-    input("...")
+
     return {"task_id": task_id, "status": "PENDING"}
 
 
@@ -745,6 +746,11 @@ async def load_b64_documents_async(
 async def get_task_status(
     task_id: str = Path(..., description="ID del job restituito alla creazione")
 ):
+
+    print("#" * 120)
+    print(task_id)
+    print("#" * 120)
+
     record = mongo_client[loaders_db_name]["tasks"].find_one({"id": task_id})
     if not record:
         raise HTTPException(status_code=404, detail="Task not found")
