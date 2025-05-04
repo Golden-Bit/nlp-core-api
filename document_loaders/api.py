@@ -47,7 +47,7 @@ def _create_task_record(task_id: str,
                         endpoint: str,
                         payload: dict) -> None:
     """Registra un job: id (nostro), endpoint e input JSON."""
-    mongo_client[loaders_db_name]["tasks"].insert_one({
+    res = mongo_client[loaders_db_name]["tasks"].insert_one({
         "id": task_id,
         "endpoint": endpoint,
         "payload": payload,
@@ -57,6 +57,8 @@ def _create_task_record(task_id: str,
         "result": None,
         "error": None
     })
+
+    print(res)
 
 def _update_task_status(task_id: str,
                         status: str,
