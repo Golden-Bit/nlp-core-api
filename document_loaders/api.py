@@ -694,8 +694,6 @@ async def load_documents_async(
     task_id = str(uuid.uuid4()) if not task_id else task_id
     print(task_id)
 
-    input("...")
-
     _create_task_record(
         task_id=task_id,
         endpoint="load_documents_async",
