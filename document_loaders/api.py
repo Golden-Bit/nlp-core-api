@@ -47,8 +47,8 @@ def _create_task_record(task_id: str,
                         endpoint: str,
                         payload: dict) -> None:
     """Registra un job: id (nostro), endpoint e input JSON."""
-    mongo_client[loaders_db_name].tasks.insert_one({
-        "id": task_id,                   # <-- campo pubblico
+    mongo_client[loaders_db_name]["tasks"].insert_one({
+        "id": task_id,
         "endpoint": endpoint,
         "payload": payload,
         "status": "PENDING",
@@ -694,11 +694,16 @@ async def load_documents_async(
     task_id = str(uuid.uuid4()) if not task_id else task_id
     print(task_id)
 
+    input("...")
+
     _create_task_record(
         task_id=task_id,
         endpoint="load_documents_async",
         payload={"config_id": config_id}
     )
+
+    input("...")
+
     background_tasks.add_task(
         _process_loader_job,
         config_id=config_id,
