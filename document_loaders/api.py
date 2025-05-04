@@ -181,8 +181,8 @@ def _process_loader_job_b64(config_id: str, task_id: str, b64_docs: List[str]) -
 class TaskInfo(BaseModel):
     id: str
     status: str
-    endpoint: str
-    payload: dict
+    endpoint: Optional[str] = None
+    payload: Optional[dict] = None
     result: Optional[Any] = None
     error: Optional[str] = None
 
