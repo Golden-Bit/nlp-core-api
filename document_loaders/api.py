@@ -1,13 +1,11 @@
 import base64
 import os
-
-from fastapi import FastAPI, HTTPException, Form, Query, Path, Body, APIRouter
+from fastapi import FastAPI, HTTPException, Form, Query, Path, Body, APIRouter, BackgroundTasks
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 import json
 import uuid
 from pymongo import MongoClient
-
 from langchain_core.documents import Document
 from langchain_unstructured import UnstructuredLoader
 from document_loaders.utilities.image2text_llm_loader import ImageDescriptionLoader
@@ -18,6 +16,7 @@ from langchain_community.document_loaders.html_bs import BSHTMLLoader
 from langchain_community.document_loaders.text import TextLoader
 from document_loaders.utilities.custom_directory_loader import CustomDirectoryLoader
 from document_loaders.utilities.video2text_llm_loader import VideoDescriptionLoader
+from datetime import datetime
 
 router = APIRouter()
 
@@ -39,6 +38,146 @@ available_loaders = {
     "UnstructuredLoader": UnstructuredLoader,
     "VideoDescriptionLoader": VideoDescriptionLoader
 }
+
+
+########################################################################################################################
+# ---------- TASK STATE HELPERS ----------
+
+def _create_task_record(task_id: str,
+                        endpoint: str,
+                        payload: dict) -> None:
+    """Registra un job: id (nostro), endpoint e input JSON."""
+    mongo_client[loaders_db_name].tasks.insert_one({
+        "id": task_id,                   # <-- campo pubblico
+        "endpoint": endpoint,
+        "payload": payload,
+        "status": "PENDING",
+        "created_at": datetime.utcnow(),
+        "finished_at": None,
+        "result": None,
+        "error": None
+    })
+
+def _update_task_status(task_id: str,
+                        status: str,
+                        *,
+                        result: Optional[List[dict]] = None,
+                        error: Optional[str] = None) -> None:
+    mongo_client[loaders_db_name].tasks.update_one(
+        {"id": task_id},                 # <-- ora filtra su `id`
+        {"$set": {
+            "status": status,
+            "finished_at": (
+                datetime.utcnow() if status in ("DONE", "ERROR") else None
+            ),
+            "result": result,
+            "error": error
+        }}
+    )
+########################################################################################################################
+
+def _process_loader_job(config_id: str, task_id: str) -> None:
+    """
+    Esegue in background tutta la logica di load_documents.
+    Aggiorna lo stato del job in Mongo.
+    """
+    try:
+        _update_task_status(task_id, "RUNNING")
+
+        config_doc = mongo_client[loaders_db_name].configs.find_one({"_id": config_id})
+        if not config_doc:
+            raise RuntimeError("Configuration not found")
+
+        cfg = config_doc["config"]
+        # risolvi le classi dei loader
+        cfg["loader_map"] = {g: available_loaders[l] for g, l in cfg["loader_map"].items()}
+        cfg.pop("config_id", None)
+
+        loader = CustomDirectoryLoader(**cfg)
+        documents = loader.load()
+        doc_models = [DocumentModel.from_langchain_document(d) for d in documents]
+
+        # persistenza documenti (identico a prima)
+        for dm in doc_models:
+            matched = False
+            if loader.output_store_map:
+                for glob, store_cfg in loader.output_store_map.items():
+                    if glob in dm.metadata.get("source", ""):
+                        save_document_to_store(store_cfg["collection_name"], dm)
+                        matched = True
+                        break
+            if not matched and loader.default_output_store:
+                save_document_to_store(loader.default_output_store["collection_name"], dm)
+
+        _update_task_status(
+            task_id, "DONE",
+            result=[dm.model_dump() for dm in doc_models]
+        )
+
+    except Exception as exc:        # pragma: no cover
+        _update_task_status(task_id, "ERROR", error=str(exc))
+
+def _process_loader_job_b64(config_id: str, task_id: str, b64_docs: List[str]) -> None:
+    """
+    Variante che crea una dir temporanea, salva i file b64 e poi
+    richiama lo stesso flusso del loader.
+    """
+    try:
+        _update_task_status(task_id, "RUNNING")
+
+        # 1. crea dir temporanea
+        temp_dir = f"/tmp/{uuid.uuid4()}"
+        os.makedirs(temp_dir, exist_ok=True)
+
+        # 2. scrive i file
+        for doc_b64 in b64_docs:
+            tmp_name = f"{uuid.uuid4()}.pdf"   # o deduci estensione dal client
+            with open(os.path.join(temp_dir, tmp_name), "wb") as fh:
+                fh.write(base64.b64decode(doc_b64))
+
+        # 3. carica config da Mongo
+        cfg_doc = mongo_client[loaders_db_name].configs.find_one({"_id": config_id})
+        if not cfg_doc:
+            raise RuntimeError("Configuration not found")
+        cfg = cfg_doc["config"]
+        cfg["path"] = temp_dir
+        cfg["loader_map"] = {g: available_loaders[l] for g, l in cfg["loader_map"].items()}
+        cfg.pop("config_id", None)
+
+        loader = CustomDirectoryLoader(**cfg)
+        documents = loader.load()
+        doc_models = [DocumentModel.from_langchain_document(d) for d in documents]
+
+        # stessa persistenza
+        for dm in doc_models:
+            matched = False
+            if loader.output_store_map:
+                for glob, store_cfg in loader.output_store_map.items():
+                    if glob in dm.metadata.get("source", ""):
+                        save_document_to_store(store_cfg["collection_name"], dm)
+                        matched = True
+                        break
+            if not matched and loader.default_output_store:
+                save_document_to_store(loader.default_output_store["collection_name"], dm)
+
+        _update_task_status(
+            task_id, "DONE",
+            result=[dm.model_dump() for dm in doc_models]
+        )
+
+    except Exception as exc:
+        _update_task_status(task_id, "ERROR", error=str(exc))
+
+########################################################################################################################
+
+
+class TaskInfo(BaseModel):
+    id: str
+    status: str
+    endpoint: str
+    payload: dict
+    result: Optional[Any] = None
+    error: Optional[str] = None
 
 
 class LoaderConfig(BaseModel):
@@ -536,6 +675,77 @@ async def delete_config(
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Configuration not found")
     return {"detail": "Configuration deleted successfully"}
+
+########################################################################################################################
+
+@router.post("/load_documents_async/{config_id}", response_model=dict)
+async def load_documents_async(
+    background_tasks: BackgroundTasks,
+    config_id: str = Path(..., description="Loader configuration ID")
+):
+    """
+    Avvia il caricamento dei documenti in background e
+    restituisce subito task_id e stato iniziale.
+    """
+    task_id = str(uuid.uuid4())
+    _create_task_record(
+        task_id=task_id,
+        endpoint="load_documents_async",
+        payload={"config_id": config_id}
+    )
+    background_tasks.add_task(
+        _process_loader_job,
+        config_id=config_id,
+        task_id=task_id
+    )
+    return {"task_id": task_id, "status": "PENDING"}
+
+
+@router.post("/load_b64_documents_async/{config_id}", response_model=dict)
+async def load_b64_documents_async(
+    background_tasks: BackgroundTasks,
+    config_id: str = Path(..., description="Loader configuration ID"),
+    documents: List[str] = Form(..., description="Lista di file in base64")
+):
+    """
+    Variante che accetta file base-64: avvia il job in background
+    mantenendo identica la firma di input.
+    """
+    task_id = str(uuid.uuid4())
+    _create_task_record(
+        task_id=task_id,
+        endpoint="load_b64_documents_async",
+        payload={"config_id": config_id, "documents_count": len(documents)}
+    )
+    background_tasks.add_task(
+        _process_loader_job_b64,
+        config_id=config_id,
+        task_id=task_id,
+        b64_docs=documents
+    )
+    return {"task_id": task_id, "status": "PENDING"}
+
+
+@router.get("/task_status/{task_id}", response_model=TaskInfo)
+async def get_task_status(
+    task_id: str = Path(..., description="ID del job restituito alla creazione")
+):
+    record = mongo_client[loaders_db_name].tasks.find_one({"id": task_id})
+    if not record:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    docs = None
+    if record["status"] == "DONE" and record["result"]:
+        docs = [DocumentModel(**d) for d in record["result"]]
+
+    return TaskInfo(
+        task_id=task_id,
+        status=record["status"],
+        result=docs,
+        error=record.get("error")
+    )
+
+########################################################################################################################
 
 
 if __name__ == "__main__":
