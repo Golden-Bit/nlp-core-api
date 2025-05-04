@@ -91,6 +91,8 @@ def _process_loader_job(config_id: str, task_id: str) -> None:
         if not config_doc:
             raise RuntimeError("Configuration not found")
 
+        input("...")
+
         cfg = config_doc["config"]
         # risolvi le classi dei loader
         cfg["loader_map"] = {g: available_loaders[l] for g, l in cfg["loader_map"].items()}
@@ -99,6 +101,8 @@ def _process_loader_job(config_id: str, task_id: str) -> None:
         loader = CustomDirectoryLoader(**cfg)
         documents = loader.load()
         doc_models = [DocumentModel.from_langchain_document(d) for d in documents]
+        print(doc_models)
+        input("...")
 
         # persistenza documenti (identico a prima)
         for dm in doc_models:
@@ -692,9 +696,8 @@ async def load_documents_async(
     Avvia il caricamento dei documenti in background e
     restituisce subito task_id e stato iniziale.
     """
-    print(task_id)
+
     task_id = str(uuid.uuid4()) if not task_id else task_id
-    print(task_id)
 
     _create_task_record(
         task_id=task_id,
@@ -702,13 +705,12 @@ async def load_documents_async(
         payload={"config_id": config_id}
     )
 
-    input("...")
-
     background_tasks.add_task(
         _process_loader_job,
         config_id=config_id,
         task_id=task_id
     )
+    input("...")
     return {"task_id": task_id, "status": "PENDING"}
 
 
