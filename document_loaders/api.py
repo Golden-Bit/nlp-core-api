@@ -754,7 +754,7 @@ async def get_task_status(
         docs = [DocumentModel(**d) for d in record["result"]]
 
     return TaskInfo(
-        task_id=task_id,
+        id=task_id,
         status=record["status"],
         result=docs,
         error=record.get("error")
