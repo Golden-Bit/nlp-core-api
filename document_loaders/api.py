@@ -58,7 +58,6 @@ def _create_task_record(task_id: str,
         "error": None
     })
 
-    print(res)
 
 def _update_task_status(task_id: str,
                         status: str,
@@ -77,7 +76,6 @@ def _update_task_status(task_id: str,
         }}
     )
 
-    print(res)
 
 ########################################################################################################################
 # ---------------- BACKGROUND WORKERS ------------
@@ -102,8 +100,6 @@ def _process_loader_job(config_id: str, task_id: str) -> None:
         loader = CustomDirectoryLoader(**cfg)
         documents = loader.load()
         doc_models = [DocumentModel.from_langchain_document(d) for d in documents]
-        print(doc_models)
-        input("...")
 
         # persistenza documenti (identico a prima)
         for dm in doc_models:
@@ -746,10 +742,6 @@ async def load_b64_documents_async(
 async def get_task_status(
     task_id: str = Path(..., description="ID del job restituito alla creazione")
 ):
-
-    print("#" * 120)
-    print(task_id)
-    print("#" * 120)
 
     record = mongo_client[loaders_db_name]["tasks"].find_one({"id": task_id})
     if not record:
