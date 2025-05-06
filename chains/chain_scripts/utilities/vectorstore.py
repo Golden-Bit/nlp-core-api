@@ -32,36 +32,54 @@ def get_vectorstore_component(store_id: str):
 # Pydantic schema for the tool                                               #
 ###############################################################################
 
-class SearchModel(BaseModel):
-    """Input schema for the search tool.
 
-    All fields are **strings** to comply with the generic tool‑calling contract.
-    They are parsed into Python types inside the search function.
+class SearchModel(BaseModel):
+    """Schema for the *string‑only* search tool parameters.
+
+    **Guidance for the agent** (summarised here so it is included in the JSON
+    Schema that LangChain exposes to the LLM):
+
+    1. If you are **not sure which metadata keys exist**, call the tool once
+       with an *empty* `metadata_filter` (i.e. "{}") to inspect the `metadata`
+       field of the returned documents.  Then craft a refined filter.
+    2. For multiple equality conditions that should all hold (logical AND),
+       either:
+        • Use the explicit Mongo‑style form:
+          `{ "$and": [{"key1": "val1"}, {"key2": "val2"}] }`
+        • Or pass the simpler *flat* object `{"key1":"val1","key2":"val2"}` —
+          the toolkit will automatically rewrite it into the `$and` form.
+    3. Supported operators include `$and`, `$or`, `$gt`, `$lt`, `$in`, `$nin`,
+       `$ne`, `$gte`, `$lte`, `$not`.
     """
 
     query: str = Field(
         ...,
         title="Query",
-        description="Free‑text query to search for in the vector store.",
+        description="Free‑text query that will be embedded and searched in the vector store.",
     )
     metadata_filter: Optional[str] = Field(
         default="{}",
         title="Metadata filter (JSON string)",
         description=(
-            "A JSON‑encoded dictionary specifying Chroma metadata filters. "
-            """Example: '{"year": 2024, "author": "Ada"}'. """
-            "Supports Mongo‑style operators (e.g. {'price': {'$lt': 50}}) when serialized as JSON."
+            "JSON‑encoded object describing Chroma metadata constraints.  "
+            "Examples:  \n"
+            " • Equality: '{\"author\": \"Ada\"}'  \n"
+            " • Range: '{\"year\": {\"$gte\": 2024}}'  \n"
+            " • Conjunction: '{\"$and\": [{\"year\":2025}, {\"status\":\"published\"}]}'  \n"
+            "If you provide a flat object with >1 keys the toolkit auto‑converts it into an $and query."
         ),
     )
     k: Optional[str] = Field(
         default="10",
         title="k (stringified integer)",
-        description="String‑encoded integer that overrides the number of top documents to return.",
+        description=(
+            "Maximum number of top‑scoring documents to return (as a string int).  "
+            "Use smaller values for exploratory peeks, larger for broader recall."
+        ),
     )
 
     class Config:
-        # Strict mode: forbid extras so the LLM makes less mistakes
-        extra = "forbid"
+        extra = "forbid"  # more robust → the agent cannot invent extra fields
 
 ###############################################################################
 # Toolkit manager                                                            #
@@ -182,14 +200,16 @@ class VectorStoreToolKitManager:
     # ------------------------------------------------------------------ #
 
     def get_tools(self):
-        """Return the LangChain StructuredTool for this vector store."""
         return [
             StructuredTool(
                 name=f"search_in_vectorstore-{self.store_id}",
                 func=self.search,
                 description=(
-                    "Semantic search over the vector store with optional metadata filtering "
-                    "and top‑k override. Parameters must be strings (JSON for filter)."
+                    "Semantic vector search over the '{self.store_id}' collection. "
+                    "• All parameters must be strings.  \n"
+                    "• Use an **exploratory call** (empty filter, small k) to discover metadata keys.  \n"
+                    "• Build a JSON `metadata_filter` using those keys, or provide a flat object to auto‑AND.  \n"
+                    "• `k` controls the number of top documents (as a stringified int)."
                 ),
                 args_schema=SearchModel,
             )
