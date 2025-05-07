@@ -178,15 +178,20 @@ class VectorStoreToolKitManager:
         Parameters are strings because LangChain passes tool arguments as JSON
         strings. We parse them here before executing the search.
         """
-        # Parse & validate parameters
-        filter_dict = self._parse_metadata_filter(metadata_filter)
-        k_int = self._parse_k(k)
 
-        # Execute search
-        retriever = self._get_retriever(filter_dict, k_int)
-        docs = retriever.invoke(query)
+        try:
+            # Parse & validate parameters
+            filter_dict = self._parse_metadata_filter(metadata_filter)
+            k_int = self._parse_k(k)
 
-        # Convert Document objects to plain data for JSON‑serializable return
+            # Execute search
+            retriever = self._get_retriever(filter_dict, k_int)
+            docs = retriever.invoke(query)
+
+            # Convert Document objects to plain data for JSON‑serializable return
+        except Exception as e:
+            return f"Error: {e}"
+
         return [
             {
                 "page_content": doc.page_content,
