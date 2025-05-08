@@ -287,15 +287,21 @@ async def stream_events_chain(request: ExecuteChainRequest):
                         # So we only print non-empty content
                         print(content, end="|")
                         yield content
+                    else:
+                        yield ""
+
                 elif kind == "on_tool_start":
                     print("--")
                     print(
                         f"Starting tool: {event['name']} with inputs: {event['data'].get('input')}"
                     )
+                    yield str(event)
+
                 elif kind == "on_tool_end":
                     print(f"Done tool: {event['name']}")
                     print(f"Tool output was: {event['data'].get('output')}")
                     print("--")
+                    yield str(event)
 
             print("\n\nToken usage:\n")
             print(str(cb))
