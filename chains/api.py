@@ -246,6 +246,24 @@ async def stream_chain(request: ExecuteChainRequest):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Helper: rimuove i payload pesanti dagli eventi prima di serializzarli
+# ─────────────────────────────────────────────────────────────────────────────
+def _sanitize_event(evt: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Restituisce una copia dell'evento `evt` in cui, se presente,
+    `evt["data"]["output"]` viene sostituito con la stringa fissa
+    "Contenuto non mostrato..".
+
+    Puoi estendere facilmente la funzione per filtrare anche altri campi
+    (es. `input` in on_tool_start) senza rompere nulla.
+    """
+    safe_evt = dict(evt)                       # shallow-copy
+    data = dict(safe_evt.get("data", {}))      # copia del sotto-dict
+    if "output" in data:                       # se presente ➜ sostituisci
+        data["output"] = "Contenuto non mostrato.."
+    safe_evt["data"] = data
+    return safe_evt
 
 @router.post("/stream_events_chain")
 async def stream_events_chain(request: ExecuteChainRequest):
@@ -301,7 +319,7 @@ async def stream_events_chain(request: ExecuteChainRequest):
                     print(f"Done tool: {event['name']}")
                     print(f"Tool output was: {event['data'].get('output')}")
                     print("--")
-                    yield json.dumps(event)
+                    yield json.dumps(_sanitize_event(event))
 
             print("\n\nToken usage:\n")
             print(str(cb))
