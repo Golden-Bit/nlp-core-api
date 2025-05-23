@@ -231,7 +231,8 @@ class VideoDescriptionLoader(BaseLoader):
             # Prepara i metadati e crea il Document
             metadata = {
                 "source": video_file,
-                "frame_descriptions": frame_descriptions
+                "frame_descriptions": frame_descriptions,
+                "filename": os.path.basename(video_file)
             }
             document = Document(page_content=final_description, metadata=metadata)
             yield document
