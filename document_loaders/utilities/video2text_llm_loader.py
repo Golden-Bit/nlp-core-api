@@ -71,7 +71,8 @@ class VideoDescriptionLoader(BaseLoader):
         frame_rate: Optional[int] = None,
         openai_api_key: str = "",
         #postprocess: Optional[callable] = None,
-        supported_formats: Optional[List[str]] = None
+        supported_formats: Optional[List[str]] = None,
+        max_frames_limit: Optional[int] = None,
     ):
         """
         Initialize the VideoDescriptionLoader with the specified parameters.
@@ -93,7 +94,7 @@ class VideoDescriptionLoader(BaseLoader):
         self.frame_rate = frame_rate
         #self.postprocess = postprocess
         self.supported_formats = supported_formats or [".mp4", ".avi", ".mov"]
-
+        self.max_frames_limit = max_frames_limit
         # Initialize the Chat model with the given API key and parameters.
         self.chat = ChatOpenAI(
             model_name=model_name,
@@ -186,6 +187,10 @@ class VideoDescriptionLoader(BaseLoader):
         for video_file in video_files:
             # Estrai i frame dal video
             frame_paths = self._extract_frames(video_file)
+
+            # Applica il limite di sicurezza, se configurato
+            if self.max_frames_limit is not None and len(frame_paths) > self.max_frames_limit:
+                frame_paths = frame_paths[: self.max_frames_limit]
 
             # Inizializza la conversazione con il prompt di sistema
             system_message = SystemMessage(content=SYSTEM_PROMPT)
