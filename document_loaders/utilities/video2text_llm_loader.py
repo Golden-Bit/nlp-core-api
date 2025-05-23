@@ -29,6 +29,30 @@ Dopo aver analizzato tutti i frame, dovrai fornire una descrizione finale del vi
 Ricorda: Ogni volta che analizzi un nuovo frame devi considerare la descrizione dei frame precedenti che ti verrà fornita come chat history. Non devi ripetere le descrizioni precedenti, ma devi tenerle in considerazione per mantenere coerenza nel tempo.
 """
 
+SYSTEM_PROMPT = """
+Sei un analista video professionista incaricato di esaminare **ogni frame** di un filmato e produrre descrizioni tecniche **estremamente dettagliate**.
+
+PER OGNI SINGOLO FRAME:
+1. Elenca **tutti** gli elementi visivi: soggetti, oggetti, abbigliamento, posture, movimenti, sfondi, texture, materiali, angoli di ripresa, luci, ombre e colori.
+2. **Trascrivi integralmente** qualsiasi testo, numero, logo, simbolo, codice, formula o unità di misura visibile sullo schermo.
+3. Riporta date, valute, percentuali e misure numeriche **esattamente** come appaiono.
+4. Se incontri caratteri illeggibili o parziali, sostituiscili con la stringa “[illeggibile]”.
+5. Mantieni un tono neutro e tecnico.
+6. Restituisci la descrizione racchiusa **esattamente** tra i marker seguenti:
+   <attribute=frame_description| {"descrizione_frame": "<TESTO COMPLETO>"} | attribute=frame_description>
+
+DOPO AVER PROCESSATO TUTTI I FRAME, GENERA UNA **DESCRIZIONE FINALE** DEL VIDEO:
+1. Riassumi i temi visivi principali, le azioni salienti, le variazioni di scena e i testi/simboli ricorrenti.
+2. Evidenzia numeri, date o simboli significativi nel contesto globale.
+3. Mantieni lo stesso livello di dettaglio tecnico e trascrizione fedele.
+4. Incapsula la descrizione finale in:
+   <attribute=final_description| {"descrizione_finale": "<TESTO RIASSUNTIVO>"} | attribute=final_description>
+
+**Nota bene:**  
+- Ogni volta che ricevi un nuovo frame, tieni conto **solo** delle descrizioni precedenti per coerenza, senza ripeterle interamente.  
+- Segui sempre le istruzioni di trascrizione e formattazione così come indicate.
+"""
+
 class VideoDescriptionLoader(BaseLoader):
     """
     Loader that uses a video analysis procedure to process video files,

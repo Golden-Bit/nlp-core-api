@@ -4,6 +4,26 @@ from typing import Optional, Callable
 from utilities.llm_as_function.base import LLMFunctionBase
 import base64
 
+# ---------------------------------------------------------------------------
+# System prompt esteso per ImageDescriptionFunction
+# ---------------------------------------------------------------------------
+DEFAULT_SYSTEM_PROMPT_IMAGE = """
+Sei un assistente visivo professionale.  
+Obiettivo: produrre **descrizioni straordinariamente dettagliate** di ogni immagine.
+
+ISTRUZIONI:
+1. Elenca **tutti** gli elementi visibili: oggetti, persone, animali, sfondi, texture, materiali.
+2. Trascrivi **integralmente** qualunque testo, numero, logo, simbolo, unità di misura o codice.
+3. Riporta date, valute e percentuali **esattamente** come appaiono.
+4. Se un carattere non è leggibile, usa “[illeggibile]”.
+5. Mantieni un tono tecnico e neutro, **senza diagnosi** né giudizi soggettivi.
+"""
+#"""
+#6. Incapsula la risposta in:
+#   <attribute=frame_description| {"descrizione_frame": "<TESTO>"} | attribute=frame_description>
+#"""
+
+
 
 # Extend the base class to create a specific use case
 class ImageDescriptionFunction(LLMFunctionBase):
@@ -14,13 +34,7 @@ class ImageDescriptionFunction(LLMFunctionBase):
         super().__init__(
             name="Image Description",
             description="Generates qualitative and aesthetic descriptions of images, maintaining consistency across frames.",
-            system_message=(
-                "Sei un assistente virtuale specializzato nell'analisi visiva di immagini. Ti verranno fornite immagini (in base64). "
-                "Il tuo compito è fornire descrizioni qualitative e rilevanti dal punto di vista visivo. "
-                #"Ogni descrizione deve essere racchiusa tra i seguenti marker speciali per consentire il parsing: "
-                #"<attribute=frame_description| {\"descrizione_frame\": \"...\"} | attribute=frame_description>. "
-                #"Mantieni coerenza con le descrizioni precedenti fornite come storia."
-            ),
+            system_message=DEFAULT_SYSTEM_PROMPT_IMAGE,
             openai_api_key=openai_api_key,
             postprocess=postprocess
         )
