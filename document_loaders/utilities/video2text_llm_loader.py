@@ -72,7 +72,7 @@ class VideoDescriptionLoader(BaseLoader):
         openai_api_key: str = "",
         #postprocess: Optional[callable] = None,
         supported_formats: Optional[List[str]] = None,
-        max_frames_limit: Optional[int] = None,
+        max_frames_limit: Optional[int] = 90,
     ):
         """
         Initialize the VideoDescriptionLoader with the specified parameters.
