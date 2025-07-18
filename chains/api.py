@@ -234,14 +234,19 @@ async def stream_chain(request: ExecuteChainRequest):
                 # yield cb
 
     try:
-        body = request
+        #body = request
 
-        if not chain_manager.chains.get(body.chain_id):
-            await load_chain(config_id=f"{body.chain_id}_config")
+        #if not chain_manager.chains.get(body.chain_id):
+        #    await load_chain(config_id=f"{body.chain_id}_config")
 
-        chain = chain_manager.get_chain(body.chain_id)
-        query = body.query
-        inference_kwargs = body.inference_kwargs
+        #chain = chain_manager.get_chain(body.chain_id)
+        #query = body.query
+        #inference_kwargs = body.inference_kwargs
+        # ✅ lazy‑load automatico: pensa a tutto ChainManager.get_chain
+        chain = chain_manager.get_chain(request.chain_id)
+        query = request.query
+        inference_kwargs = request.inference_kwargs
+
         return StreamingResponse(generate_response(chain, query, inference_kwargs), media_type="application/json")
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -326,14 +331,19 @@ async def stream_events_chain(request: ExecuteChainRequest):
             #yield cb
 
     try:
-        body = request
+        #body = request
 
-        if not chain_manager.chains.get(body.chain_id):
-            await load_chain(config_id=f"{body.chain_id}_config")
+        #if not chain_manager.chains.get(body.chain_id):
+        #    await load_chain(config_id=f"{body.chain_id}_config")
 
-        chain = chain_manager.get_chain(body.chain_id)
-        query = body.query
-        inference_kwargs = body.inference_kwargs
+        #chain = chain_manager.get_chain(body.chain_id)
+        #query = body.query
+        #inference_kwargs = body.inference_kwargs
+
+        chain = chain_manager.get_chain(request.chain_id)
+        query = request.query
+        inference_kwargs = request.inference_kwargs
+
         return StreamingResponse(generate_response(chain, query, inference_kwargs), media_type="application/json")
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
