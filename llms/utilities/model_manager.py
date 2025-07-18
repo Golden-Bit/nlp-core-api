@@ -49,11 +49,33 @@ class ModelManager:
         if model_id in self.models:
             del self.models[model_id]
 
+    #def get_model(self, model_id: str):
+    #    """
+    #    Retrieves a loaded model by its model ID.
+    #    """
+    #    return self.models.get(model_id)
+
     def get_model(self, model_id: str):
         """
-        Retrieves a loaded model by its model ID.
+        Ritorna il modello in RAM.
+        Se non è caricato prova a cercare nel DB una configurazione con
+        `model_id` uguale; se la trova lo carica e poi lo restituisce.
         """
-        return self.models.get(model_id)
+
+        mdl = self.models.get(model_id)
+
+        if mdl is not None:
+            return mdl
+
+        # ‑‑ lazy‑load --------------------------------------------------
+        cfg = collection.find_one({"model_id": model_id})
+
+        if cfg:
+            self.load_model(cfg["_id"])  # usa già la factory esistente
+
+            return self.models.get(model_id)
+
+        return None  # niente da caricare ⇒ restiamo su None
 
     def list_loaded_models(self):
         """

@@ -401,6 +401,14 @@ async def offload_vector_store(
 
     Returns a confirmation message upon successful offloading.
     """
+
+    if store_id not in vector_stores:
+        # tentativo di lazy‑load
+         cfg = vector_store_collection.find_one({"config.store_id": store_id})
+
+         if cfg:
+             load_vector_store(config_id=cfg["_id"])
+
     if store_id not in vector_stores:
         raise HTTPException(status_code=404, detail="Vector store not found in memory")
 
@@ -433,6 +441,13 @@ async def add_documents_to_vector_store(
     Returns a confirmation message upon successful addition.
     """
     if store_id not in vector_stores:
+        # tentativo di lazy‑load
+        cfg = vector_store_collection.find_one({"config.store_id": store_id})
+
+        if cfg:
+            load_vector_store(config_id=cfg["_id"])
+
+    if store_id not in vector_stores:
         raise HTTPException(status_code=404, detail="Vector store not found in memory")
 
     vector_store_instance = vector_stores[store_id]
@@ -458,6 +473,13 @@ async def add_texts_to_vector_store(
     Returns a confirmation message upon successful addition.
     """
     if store_id not in vector_stores:
+        # tentativo di lazy‑load
+        cfg = vector_store_collection.find_one({"config.store_id": store_id})
+
+        if cfg:
+            load_vector_store(config_id=cfg["_id"])
+
+    if store_id not in vector_stores:
         raise HTTPException(status_code=404, detail="Vector store not found in memory")
 
     vector_store_instance = vector_stores[store_id]
@@ -480,6 +502,13 @@ async def remove_documents_from_vector_store(
 
     Returns a confirmation message upon successful removal.
     """
+    if store_id not in vector_stores:
+        # tentativo di lazy‑load
+        cfg = vector_store_collection.find_one({"config.store_id": store_id})
+
+        if cfg:
+            load_vector_store(config_id=cfg["_id"])
+
     if store_id not in vector_stores:
         raise HTTPException(status_code=404, detail="Vector store not found in memory")
 
@@ -504,6 +533,13 @@ async def execute_vector_store_method(
 
     Returns the result of the method execution.
     """
+    if store_id not in vector_stores:
+        # tentativo di lazy‑load
+        cfg = vector_store_collection.find_one({"config.store_id": store_id})
+
+        if cfg:
+            load_vector_store(config_id=cfg["_id"])
+
     if store_id not in vector_stores:
         raise HTTPException(status_code=404, detail="Vector store not found in memory")
 
@@ -530,6 +566,13 @@ async def add_documents_from_document_store(
 
     Returns a confirmation message upon successful addition.
     """
+    if store_id not in vector_stores:
+        # tentativo di lazy‑load
+        cfg = vector_store_collection.find_one({"config.store_id": store_id})
+
+        if cfg:
+            load_vector_store(config_id=cfg["_id"])
+
     if store_id not in vector_stores:
         raise HTTPException(status_code=404, detail="Vector store not found in memory")
 
@@ -571,6 +614,13 @@ async def update_document_in_vector_store(
     Returns a confirmation message upon successful update.
     """
     if store_id not in vector_stores:
+        # tentativo di lazy‑load
+        cfg = vector_store_collection.find_one({"config.store_id": store_id})
+
+        if cfg:
+            load_vector_store(config_id=cfg["_id"])
+
+    if store_id not in vector_stores:
         raise HTTPException(status_code=404, detail="Vector store not found in memory")
 
     vector_store_instance = vector_stores[store_id]
@@ -596,6 +646,13 @@ async def search_vector_store(
 
     Returns a list of documents that match the search criteria.
     """
+    if store_id not in vector_stores:
+        # tentativo di lazy‑load
+        cfg = vector_store_collection.find_one({"config.store_id": store_id})
+
+        if cfg:
+            load_vector_store(config_id=cfg["_id"])
+
     if store_id not in vector_stores:
         raise HTTPException(status_code=404, detail="Vector store not found in memory")
 
@@ -635,6 +692,13 @@ async def vector_store_as_retriever(
     Returns a list of documents that match the search criteria.
     """
     if store_id not in vector_stores:
+        # tentativo di lazy‑load
+        cfg = vector_store_collection.find_one({"config.store_id": store_id})
+
+        if cfg:
+            load_vector_store(config_id=cfg["_id"])
+
+    if store_id not in vector_stores:
         raise HTTPException(status_code=404, detail="Vector store not found in memory")
 
     vector_store_instance = vector_stores[store_id]
@@ -672,6 +736,13 @@ async def filter_vector_store(
     Returns a list of documents that match the filter criteria.
     """
     if store_id not in vector_stores:
+        # tentativo di lazy‑load
+        cfg = vector_store_collection.find_one({"config.store_id": store_id})
+
+        if cfg:
+            load_vector_store(config_id=cfg["_id"])
+
+    if store_id not in vector_stores:
         raise HTTPException(status_code=404, detail="Vector store not found in memory")
 
     vector_store_instance = vector_stores[store_id]
@@ -698,6 +769,16 @@ async def execute_vector_store_method(request: ExecuteMethodRequest):
     method_name = request.method_name
     args = request.args
     kwargs = request.kwargs
+
+    if store_id not in vector_stores:
+        # tentativo di lazy‑load
+        cfg = vector_store_collection.find_one({"config.store_id": store_id})
+
+        if cfg:
+            load_vector_store(config_id=cfg["_id"])
+
+    if store_id not in vector_stores:
+        raise HTTPException(status_code=404, detail="Vector store not found in memory")
 
     try:
         vector_store_instance = vector_stores.get(store_id)
@@ -728,6 +809,16 @@ async def get_vector_store_attribute(request: GetAttributeRequest):
     """
     store_id = request.store_id
     attribute_name = request.attribute_name
+
+    if store_id not in vector_stores:
+        # tentativo di lazy‑load
+        cfg = vector_store_collection.find_one({"config.store_id": store_id})
+
+        if cfg:
+            load_vector_store(config_id=cfg["_id"])
+
+    if store_id not in vector_stores:
+        raise HTTPException(status_code=404, detail="Vector store not found in memory")
 
     try:
         vector_store_instance = vector_stores.get(store_id)
@@ -762,6 +853,16 @@ async def add_documents_from_document_store_async(
     Restituisce subito `task_id` che può essere interrogato con
     **/vector_store/task_status/{task_id}**.
     """
+
+    if store_id not in vector_stores:
+        # tentativo di lazy‑load
+        cfg = vector_store_collection.find_one({"config.store_id": store_id})
+
+        if cfg:
+            load_vector_store(config_id=cfg["_id"])
+
+    if store_id not in vector_stores:
+        raise HTTPException(status_code=404, detail="Vector store not found in memory")
 
     task_id = str(uuid.uuid4()) if not task_id else task_id
 

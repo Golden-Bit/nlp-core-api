@@ -160,7 +160,26 @@ class ChainManager:
             raise ValueError("Configuration not found")
         return config
 
+   # def get_chain(self, chain_id: str):
+   #     if chain_id not in self.chains:
+   #         raise ValueError("Chain not found")
+   #     return self.chains[chain_id]
+
     def get_chain(self, chain_id: str):
+        """
+        Se la chain non è ancora attiva prova a caricarla dall’eventuale
+        configurazione ‹chain_id› → ‹config_id› in Mongo.
+        """
+
         if chain_id not in self.chains:
-            raise ValueError("Chain not found")
+            cfg = self.collection.find_one({"chain_id": chain_id})
+
+        if cfg:
+            self.load_chain(cfg["_id"])
+
+
+        if chain_id not in self.chains:
+
+            raise ValueError("Chain not found and no config found in DB")
+
         return self.chains[chain_id]
