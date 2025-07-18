@@ -174,8 +174,8 @@ class ChainManager:
         if chain_id not in self.chains:
             cfg = self.collection.find_one({"chain_id": chain_id})
 
-        if cfg:
-            self.load_chain(cfg["_id"])
+            if cfg:
+                self.load_chain(cfg["_id"])
 
 
         if chain_id not in self.chains:
