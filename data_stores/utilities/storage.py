@@ -26,14 +26,14 @@ class FileStorage:
                 json.dump({}, f)
 
         # -- NEW --------------------------------------------------------------
-        def _get_metadata_store_cached(self) -> Dict[str, Any]:
-            """
-            Ritorna un riferimento _in‑memory_ al metadata store.
-            Viene caricato solo la prima volta per la durata della request.
-            """
-            if not hasattr(self, "_cached_meta"):
-                self._cached_meta = self._load_metadata_store()
-            return self._cached_meta
+    def _get_metadata_store_cached(self) -> Dict[str, Any]:
+        """
+        Ritorna un riferimento _in‑memory_ al metadata store.
+        Viene caricato solo la prima volta per la durata della request.
+        """
+        if not hasattr(self, "_cached_meta"):
+            self._cached_meta = self._load_metadata_store()
+        return self._cached_meta
 
     def _load_metadata_store(self) -> Dict[str, Any]:
         """
