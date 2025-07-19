@@ -353,13 +353,11 @@ async def list_directories(
         norm_prefix = prefix.replace("\\", "/")
         directories = [d for d in directories if d.startswith(norm_prefix)]
 
-    # Costruisci la risposta con i metadati
+    # lettura _una sola volta_ di metadata.json
+    meta_map = file_storage.get_directory_metadata_bulk(directories)
     metadata_list = [
-        DirectoryMetadata(
-            path=dir_path,
-            custom_metadata=file_storage.get_directory_metadata(dir_path),
-        )
-        for dir_path in directories
+        DirectoryMetadata(path=d, custom_metadata=meta_map.get(d, {}))
+        for d in directories
     ]
     return metadata_list
 
