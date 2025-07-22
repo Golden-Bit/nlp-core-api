@@ -32,6 +32,10 @@ class ChainConfigRequest(BaseModel):
     llm_id: str = Field("llm_id", example="llm_id", title="LLM ID", description="The unique ID of the LLM.")
     vectorstore_id: str = Field("vectorstore_id", example="example_vectorstore", title="Vectorstore ID", description="The unique ID of the vectorstore.")
     tools: List[Dict[str, Any]] = Field([], example="example_tools", title="Vectorstore ID", description="The unique ID of the vectorstore.")
+    extra_metadata : Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Arbitrary key-value pairs with additional metadata."
+    )
 
 class ExecuteChainRequest(BaseModel):
     chain_id: str = Field(..., example="example_chain", title="Chain ID", description="The unique ID of the chain to execute.")
