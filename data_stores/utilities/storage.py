@@ -242,7 +242,8 @@ class FileStorage:
         return metadata_store.get(directory, {})
 
     def get_directory_metadata_bulk(self, directories: List[str]) -> Dict[str, dict]:
-        store = self._get_metadata_store_cached()
+        #store = self._get_metadata_store_cached()
+        store = self._load_metadata_store()
         return {d: store.get(d, {}) for d in directories}
 
     def list_directories(self) -> List[str]:

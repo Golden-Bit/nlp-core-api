@@ -359,6 +359,7 @@ async def list_directories(
         DirectoryMetadata(path=d, custom_metadata=meta_map.get(d, {}))
         for d in directories
     ]
+
     return metadata_list
 
 
