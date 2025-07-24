@@ -510,27 +510,33 @@ async def stream_events_chain(request: ExecuteChainRequest):
         inference_kwargs = request.inference_kwargs
 
         # —————— fallback legacy vs multimodale ——————
-        if request.query:
+        if request.query is not None:
             q = request.query
-            # 1a) stringa legacy: query["input"] è una str → trasformalo
+            # 1) Legacy “stringa + lista di dict” o “stringa + lista di liste”
             if isinstance(q.get("input"), str):
-                # user message
-                user_parts = build_parts(q["input"], [])  # testo legacy senza immagini
+                # costruisco il primo HumanMessage
+                user_parts = build_parts(q["input"], [])
                 user_msg = HumanMessage(content=user_parts)
-                # history: lista di BaseMessage costruita da [role, text]
+
                 history_msgs: List[BaseMessage] = []
-                for role, txt in q.get("chat_history", []):
-                    obj = {
-                        "role": role,
-                        "parts": [
-                            {"type": "text", "text": txt}
-                        ]
-                    }
+                for item in q.get("chat_history", []):
+                    # Se è una tupla/lista [role, text]
+                    if isinstance(item, (list, tuple)) and len(item) == 2:
+                        role, txt = item
+                    # Se è un dict {id, role, content, …}
+                    elif isinstance(item, dict) and "role" in item and "content" in item:
+                        role, txt = item["role"], item["content"]
+                    else:
+                        # Skip formati sconosciuti
+                        continue
+                    obj = {"role": role, "parts": [{"type": "text", "text": txt}]}
                     history_msgs.append(to_message(obj))
-                model_query = {
-                    "input": [user_msg],
-                    "chat_history": history_msgs,
-                }
+
+                model_query = {"input": [user_msg], "chat_history": history_msgs}
+
+            # 2) Legacy già “nuovo”: input è lista di BaseMessage, history lista di BaseMessage/dict
+            elif isinstance(q.get("input"), list):
+                model_query = q
             else:
                 # 1b) già in formato dict con input:list e chat_history:list → usalo così com'è
                 model_query = q
