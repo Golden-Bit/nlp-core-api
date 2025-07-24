@@ -535,8 +535,8 @@ async def stream_events_chain(request: ExecuteChainRequest):
                 model_query = {"input": [user_msg], "chat_history": history_msgs}
 
             # 2) Legacy già “nuovo”: input è lista di BaseMessage, history lista di BaseMessage/dict
-            elif isinstance(q.get("input"), list):
-                model_query = q
+            #elif isinstance(q.get("input"), list):
+            #    model_query = q
             else:
                 # 1b) già in formato dict con input:list e chat_history:list → usalo così com'è
                 model_query = q
