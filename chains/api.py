@@ -94,7 +94,7 @@ class ExecuteChainRequest(BaseModel):
         title="Input Text",
         description="Testo del messaggio corrente dell'utente."
     )
-    input_images: Optional[List[str]] = Field(
+    input_images: Optional[List[Dict[str, Any]]] = Field(
         None,
         example=["https://example.com/dog.jpg"],
         title="Input Images",
@@ -515,7 +515,7 @@ async def stream_events_chain(request: ExecuteChainRequest):
             # 1) Legacy “stringa + lista di dict” o “stringa + lista di liste”
             if isinstance(q.get("input"), str):
                 # costruisco il primo HumanMessage
-                user_parts = build_parts(q["input"], [])
+                user_parts = build_parts_legacy(q["input"], [])
                 user_msg = HumanMessage(content=user_parts)
 
                 history_msgs: List[BaseMessage] = []
