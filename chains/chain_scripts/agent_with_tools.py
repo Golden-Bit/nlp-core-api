@@ -39,13 +39,12 @@ def get_chain(llm: Any = None,
         initialized_tools = tools_map[tool["name"]](**tool["kwargs"]).get_tools()
         agent_tools.extend(initialized_tools)
 
-    # Configura il prompt
     prompt = ChatPromptTemplate.from_messages(
         [
             ("system", system_message),
-            MessagesPlaceholder(variable_name="chat_history"),
-            ("human", "{input}"),
-            MessagesPlaceholder(variable_name="agent_scratchpad"),
+            MessagesPlaceholder("chat_history"),  # lista di BaseMessage
+            MessagesPlaceholder("input"),  # UN singolo HumanMessage
+            MessagesPlaceholder("agent_scratchpad"),
         ]
     )
 

@@ -6,6 +6,7 @@ import os
 
 from fastapi import FastAPI, HTTPException, Path, Body, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
+from langchain_core.messages import HumanMessage, BaseMessage
 from pydantic import BaseModel, Field
 from typing import Dict, Any, List, Optional
 from pymongo import MongoClient
@@ -14,6 +15,8 @@ from fastapi.responses import StreamingResponse
 
 #from langchain_community.callbacks.manager import get_openai_callback
 from langchain_community.callbacks import get_openai_callback
+
+from chains.utilities.multimodal import to_message, build_parts
 
 router = APIRouter()
 MONGO_CONNECTION_STRING = os.getenv('MONGO_CONNECTION_STRING', 'localhost')
@@ -37,10 +40,99 @@ class ChainConfigRequest(BaseModel):
         description="Arbitrary key-value pairs with additional metadata."
     )
 
+#class ExecuteChainRequest(BaseModel):
+#    chain_id: str = Field(..., example="example_chain", title="Chain ID", description="The unique ID of the chain to execute.")
+#    query: Dict[str, Any] = Field(..., example={"input": "What is my name?", "chat_history": [["user", "hello, my name is mario!"], ["assistant", "hello, how are you mario?"]]}, title="Query", description="The input query for the chain.")
+#    inference_kwargs: Dict[str, Any] = Field(..., example={}, description="")
+
+
 class ExecuteChainRequest(BaseModel):
-    chain_id: str = Field(..., example="example_chain", title="Chain ID", description="The unique ID of the chain to execute.")
-    query: Dict[str, Any] = Field(..., example={"input": "What is my name?", "chat_history": [["user", "hello, my name is mario!"], ["assistant", "hello, how are you mario?"]]}, title="Query", description="The input query for the chain.")
-    inference_kwargs: Dict[str, Any] = Field(..., example={}, description="")
+    """
+    Modello di richiesta per l'esecuzione di una chain.
+
+    Questo modello supporta due modalità di input:
+    1. **Legacy** tramite il campo `query` (deprecato): un dizionario con chiavi
+       - `input`: stringa di testo
+       - `chat_history`: lista di tuple [ruolo, messaggio]
+    2. **Multimodale** tramite i nuovi campi:
+       - `input_text`: testo dell'ultimo turno
+       - `input_images`: lista di URL o data-URI per immagini nell'ultimo turno
+       - `chat_history`: lista di messaggi storici, ciascuno con:
+         - `role`: "user" o "assistant"
+         - `parts`: array di parti multimodali (dict con `type`, `text` o `image_url`)
+
+    **Deprecazione:** il campo `query` sarà rimosso in una futura versione. Si consiglia di migrare all'input multimodale.
+    """
+    chain_id: str = Field(
+        ...,
+        example="example_chain",
+        title="Chain ID",
+        description="ID univoco della chain da eseguire."
+    )
+
+    # ---------------- Legacy query (deprecata) ----------------
+    query: Optional[Dict[str, Any]] = Field(
+        None,
+        example={
+            "input": "What is my name?",
+            "chat_history": [
+                ["user", "hello, my name is mario!"],
+                ["assistant", "hello, how are you mario?"]
+            ]
+        },
+        title="Legacy Query",
+        description=(
+            "(DEPRECATO) Dizionario di input testuale e cronologia chat. "
+            "Usare `input_text`, `input_images` e `chat_history` invece."
+        )
+    )
+
+    # ------------- Nuovi campi multimodali -------------------
+    input_text: Optional[str] = Field(
+        None,
+        example="What is my dog breed?",
+        title="Input Text",
+        description="Testo del messaggio corrente dell'utente."
+    )
+    input_images: Optional[List[str]] = Field(
+        None,
+        example=["https://example.com/dog.jpg"],
+        title="Input Images",
+        description=(
+            "Lista di URL o data-URI per immagini da includere "
+            "nel messaggio corrente."
+        )
+    )
+    chat_history: Optional[List[Dict[str, Any]]] = Field(
+        None,
+        example=[
+            {
+                "role": "user",
+                "parts": [
+                    {"type": "text", "text": "Here is my dog"},
+                    {"type": "image_url", "image_url": {"url": "https://.../dog.jpg"}}
+                ]
+            },
+            {
+                "role": "assistant",
+                "parts": [
+                    {"type": "text", "text": "Looks like a Labrador!"}
+                ]
+            }
+        ],
+        title="Chat History",
+        description=(
+            "Cronologia dei messaggi precedenti con parti multimodali. "
+            "Ogni messaggio è un dict con chiavi 'role' e 'parts'."
+        )
+    )
+
+    inference_kwargs: Dict[str, Any] = Field(
+        default_factory=dict,
+        example={"temperature": 0.2, "stream": True},
+        description="Argomenti addizionali per l'invocazione della chain."
+    )
+
 
 @router.post("/configure_chain/", response_model=dict)
 async def configure_chain(request: ChainConfigRequest):
@@ -274,7 +366,7 @@ def _sanitize_event(evt: Dict[str, Any]) -> Dict[str, Any]:
     safe_evt["data"] = data
     return safe_evt
 
-@router.post("/stream_events_chain")
+#@router.post("/stream_events_chain")
 async def stream_events_chain(request: ExecuteChainRequest):
 
     # TODO:
@@ -352,6 +444,94 @@ async def stream_events_chain(request: ExecuteChainRequest):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+
+@router.post("/stream_events_chain")
+async def stream_events_chain(request: ExecuteChainRequest):
+
+    # TODO:
+    #  - integra tracciamento di token e costi
+    #  - integra caricamento automatico dell oggetto se non presente in memoria (default true, da settare mediante input)
+
+    async def generate_response(chain: Any, query: Dict[str, Any], inference_kwargs: Dict[str, Any], stream_only_content: bool = False):
+
+        with get_openai_callback() as cb:
+            async for event in chain.astream_events(
+                query,
+                version="v1",
+                **inference_kwargs,
+            ):
+                kind = event["event"]
+                if kind == "on_chain_start":
+                    if (
+                            event["name"] == "Agent"
+                    ):  # Was assigned when creating the agent with `.with_config({"run_name": "Agent"})`
+                        print(
+                            f"Starting agent: {event['name']} with input: {event['data'].get('input')}"
+                        )
+                elif kind == "on_chain_end":
+                    if (
+                            event["name"] == "Agent"
+                    ):  # Was assigned when creating the agent with `.with_config({"run_name": "Agent"})`
+                        print()
+                        print("--")
+                        print(
+                            f"Done agent: {event['name']} with output: {event['data'].get('output')['output']}"
+                        )
+                if kind == "on_chat_model_stream":
+                    content = event["data"]["chunk"].content
+                    if content:
+                        # Empty content in the context of OpenAI means
+                        # that the model is asking for a tool to be invoked.
+                        # So we only print non-empty content
+                        print(content, end="|")
+                        yield content
+                    else:
+                        yield ""
+
+                elif kind == "on_tool_start":
+                    print("--")
+                    print(
+                        f"Starting tool: {event['name']} with inputs: {event['data'].get('input')}"
+                    )
+                    yield json.dumps(event)
+
+                elif kind == "on_tool_end":
+                    print(f"Done tool: {event['name']}")
+                    print(f"Tool output was: {event['data'].get('output')}")
+                    print("--")
+                    yield json.dumps(_sanitize_event(event))
+
+            print("\n\nToken usage:\n")
+            print(str(cb))
+            #yield cb
+
+    try:
+        chain = chain_manager.get_chain(request.chain_id)
+        inference_kwargs = request.inference_kwargs
+
+        # —————— fallback legacy vs multimodale ——————
+        if request.query:
+            # 1) legacy path: il client ha inviato ancora `query` come prima
+            model_query = request.query
+        else:
+            # 2) nuovo path multimodale
+            user_msg: BaseMessage = HumanMessage(
+                content=build_parts(request.input_text, request.input_images)
+            )
+            history_msgs: List[BaseMessage] = [
+                to_message(m) for m in (request.chat_history or [])
+            ]
+            model_query = {
+                "input": [user_msg],
+                "chat_history": history_msgs,
+            }
+
+        return StreamingResponse(
+            generate_response(chain, model_query, inference_kwargs),
+            media_type="application/json"
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn
