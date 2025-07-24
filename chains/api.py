@@ -511,8 +511,29 @@ async def stream_events_chain(request: ExecuteChainRequest):
 
         # —————— fallback legacy vs multimodale ——————
         if request.query:
-            # 1) legacy path: il client ha inviato ancora `query` come prima
-            model_query = request.query
+            q = request.query
+            # 1a) stringa legacy: query["input"] è una str → trasformalo
+            if isinstance(q.get("input"), str):
+                # user message
+                user_parts = build_parts(q["input"], [])  # testo legacy senza immagini
+                user_msg = HumanMessage(content=user_parts)
+                # history: lista di BaseMessage costruita da [role, text]
+                history_msgs: List[BaseMessage] = []
+                for role, txt in q.get("chat_history", []):
+                    obj = {
+                        "role": role,
+                        "parts": [
+                            {"type": "text", "text": txt}
+                        ]
+                    }
+                    history_msgs.append(to_message(obj))
+                model_query = {
+                    "input": [user_msg],
+                    "chat_history": history_msgs,
+                }
+            else:
+                # 1b) già in formato dict con input:list e chat_history:list → usalo così com'è
+                model_query = q
         else:
             # 2) nuovo path multimodale
             user_msg: BaseMessage = HumanMessage(
