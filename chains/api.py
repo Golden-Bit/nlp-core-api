@@ -16,7 +16,7 @@ from fastapi.responses import StreamingResponse
 #from langchain_community.callbacks.manager import get_openai_callback
 from langchain_community.callbacks import get_openai_callback
 
-from chains.utilities.multimodal import to_message, build_parts
+from chains.utilities.multimodal import to_message, build_parts, build_parts_legacy
 
 router = APIRouter()
 MONGO_CONNECTION_STRING = os.getenv('MONGO_CONNECTION_STRING', 'localhost')
