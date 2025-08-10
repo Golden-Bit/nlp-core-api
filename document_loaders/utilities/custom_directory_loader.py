@@ -223,22 +223,25 @@ class CustomDirectoryLoader(BaseLoader):
 
 
 if __name__ == "__main__":
-    from document_loaders.utilities.image2text_llm_loader import ImageDescriptionLoader
+   # from document_loaders.utilities.image2text_llm_loader import ImageDescriptionLoader
 
     loader_map = {
-        "*.pdf": PyMuPDFLoader,
-        "img.jpg": ImageDescriptionLoader,  # Add support for images
-        "*.png": ImageDescriptionLoader,  # Add PNG support
+        "*.pdf": UnstructuredFileLoader,
+        #"img.jpg": ImageDescriptionLoader,  # Add support for images
+        #"*.png": ImageDescriptionLoader,  # Add PNG support
     }
 
     loader_kwargs_map = {
         "*.pdf": {
-            "pages": None,
-            "page_chunks": True,
-            "write_images": True,
-            "image_size_limit": 0.025,
+            #"pages": None,
+            #"page_chunks": True,
+            #"write_images": True,
+            #"image_size_limit": 0.025,
             #"embed_images": True,
-            "image_path": "C:\\Users\\Golden Bit\\Desktop\\projects_in_progress\\GoldenProjects\\golden_bit\\repositories\\nlp-core-api\\tmp",
+            #"image_path": "C:\\Users\\Golden Bit\\Desktop\\projects_in_progress\\GoldenProjects\\golden_bit\\repositories\\nlp-core-api\\tmp",
+            "chunking_strategy": "by_page",
+            "strategy": "hi_res",
+            "partition_via_api": False,
         },  # Add arguments for PyMuPDFLoader
         "img.jpg": {"openai_api_key": "....", "resize_to": (256, 256)},
         # Arguments for ImageDescriptionLoader
@@ -253,7 +256,7 @@ if __name__ == "__main__":
     }
 
     loader = CustomDirectoryLoader(
-        path="C:\\Users\\Golden Bit\\Downloads\\data",
+        path="C:\\Users\\info\\Desktop\\work_space\\repositories\\nlp-core-api\\data\\my_data",
         loader_map=loader_map,
         loader_kwargs_map=loader_kwargs_map,
         metadata_map=metadata_map,
