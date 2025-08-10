@@ -10,7 +10,7 @@ from chains.chain_scripts.utilities.graph import GraphManager
 from chains.chain_scripts.utilities.mongodb import MongoDBToolKitManager
 from chains.chain_scripts.utilities.vectorstore import VectorStoreToolKitManager
 from chains.chain_scripts.utilities.report import TemplateManager
-from chains.chain_scripts.utilities.oepnapi_agent import OpenApiAgenticTool
+#from chains.chain_scripts.utilities.oepnapi_agent import OpenApiAgenticTool
 
 # Mapping degli strumenti
 tools_map = {
@@ -19,7 +19,7 @@ tools_map = {
     "VectorStoreTools": VectorStoreToolKitManager,
     "TemplateManager": TemplateManager,
     "GraphManager": GraphManager,
-    "OpenApiAgenticTool": OpenApiAgenticTool
+    #"OpenApiAgenticTool": OpenApiAgenticTool
 }
 
 def get_chain(llm: Any = None,
