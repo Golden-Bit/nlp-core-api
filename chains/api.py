@@ -366,7 +366,7 @@ def _sanitize_event(evt: Dict[str, Any]) -> Dict[str, Any]:
     safe_evt["data"] = data
     return safe_evt
 
-@router.post("/stream_events_chain")
+#@router.post("/stream_events_chain")
 async def stream_events_chain(request: ExecuteChainRequest):
 
     # TODO:
@@ -445,7 +445,7 @@ async def stream_events_chain(request: ExecuteChainRequest):
         raise HTTPException(status_code=400, detail=str(e))
 
 
-#@router.post("/stream_events_chain")
+@router.post("/stream_events_chain")
 async def stream_events_chain(request: ExecuteChainRequest):
 
     # TODO:
