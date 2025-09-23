@@ -2,6 +2,7 @@
 import os
 from pymongo import MongoClient
 from langchain_community.llms import VLLM, VLLMOpenAI
+from langchain_core.caches import InMemoryCache
 from langchain_openai import OpenAI, ChatOpenAI
 from typing import Dict
 
@@ -10,6 +11,9 @@ MONGO_CONNECTION_STRING = os.getenv('MONGO_CONNECTION_STRING', 'localhost')
 client = MongoClient(MONGO_CONNECTION_STRING)
 db = client['model_config_db']
 collection = db['model_configs']
+
+# risolve i forward refs (anche se non usi cache)
+ChatOpenAI.model_rebuild()
 
 available_models = {
     "OpenAI": OpenAI,
