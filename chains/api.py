@@ -206,6 +206,7 @@ async def load_chain(config_id: str = Path(..., description="The unique ID of th
         result = chain_manager.load_chain(config_id)
         return result
     except ValueError as e:
+        print(e)
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.post("/unload_chain/{chain_id}", response_model=dict)
