@@ -357,7 +357,7 @@ def load_vector_store(
     """
     config = vector_store_collection.find_one({"_id": config_id})
     if not config:
-        print(f"load_vector_store error: not config")
+        print(f"load_vector_store error: config {config_id} not exist")
         raise HTTPException(status_code=404, detail="Configuration not found")
 
     store_id = config["config"]["store_id"]
