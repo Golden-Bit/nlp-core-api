@@ -59,7 +59,7 @@ def get_vectorstore_component(store_id: str):
 
     if not vector_stores.get(store_id):
         try:
-            load_vector_store(config_id=f"{store_id}_config")
+            load_vector_store(config_id=f"{store_id}_vector_store_config")
         except Exception as e:
             print(e)
 
