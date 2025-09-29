@@ -8,6 +8,7 @@ from langchain_openai import ChatOpenAI
 from chains.chain_scripts.utilities.dataloader import DocumentToolKitManager
 from chains.chain_scripts.utilities.graph import GraphManager
 from chains.chain_scripts.utilities.mongodb import MongoDBToolKitManager
+from chains.chain_scripts.utilities.noop import NoopToolKitManager
 from chains.chain_scripts.utilities.vectorstore import VectorStoreToolKitManager
 from chains.chain_scripts.utilities.report import TemplateManager
 #from chains.chain_scripts.utilities.oepnapi_agent import OpenApiAgenticTool
@@ -19,6 +20,7 @@ tools_map = {
     "VectorStoreTools": VectorStoreToolKitManager,
     "TemplateManager": TemplateManager,
     "GraphManager": GraphManager,
+    "NoopTool": NoopToolKitManager,  # <-- NEW
     #"OpenApiAgenticTool": OpenApiAgenticTool
 }
 
