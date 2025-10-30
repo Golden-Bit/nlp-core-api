@@ -502,6 +502,13 @@ async def stream_events_chain(request: ExecuteChainRequest):
                     print("--")
                     yield json.dumps(_sanitize_event(event))
 
+                else:
+                    event_name = event.get('name',None)
+                    print(f"Untracked event: {event_name}")
+                    print(event)
+                    print("--")
+
+
             print("\n\nToken usage:\n")
             print(str(cb))
             #yield cb
