@@ -188,6 +188,9 @@ class VectorStoreToolKitManager:
             retriever = self._get_retriever(filter_dict, k_int)
             docs = retriever.invoke(query)
 
+            for doc in docs:
+                doc.metadata.pop("orig_elements", None)
+
             # Convert Document objects to plain data for JSON‑serializable return
         except Exception as e:
             return f"Error: {e}"
@@ -210,7 +213,7 @@ class VectorStoreToolKitManager:
                 name=f"search_in_vectorstore-{self.store_id}",
                 func=self.search,
                 description=(
-                    "Semantic vector search over the '{self.store_id}' collection. "
+                    "Semantic vector search (chroma DB) over the '{self.store_id}' collection. "
                     "• All parameters must be strings.  \n"
                     "• Use an **exploratory call** (empty filter, small k) to discover metadata keys.  \n"
                     "• Build a JSON `metadata_filter` using those keys, or provide a flat object to auto‑AND.  \n"
