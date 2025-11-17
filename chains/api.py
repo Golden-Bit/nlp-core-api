@@ -362,8 +362,8 @@ def _sanitize_event(evt: Dict[str, Any]) -> Dict[str, Any]:
     """
     safe_evt = dict(evt)                       # shallow-copy
     data = dict(safe_evt.get("data", {}))      # copia del sotto-dict
-    if "output" in data:                       # se presente ➜ sostituisci
-        data["output"] = "Contenuto non mostrato.."
+    #if "output" in data:                       # se presente ➜ sostituisci
+        #data["output"] = "Contenuto non mostrato.."
     safe_evt["data"] = data
     return safe_evt
 
