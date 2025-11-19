@@ -351,21 +351,85 @@ async def stream_chain(request: ExecuteChainRequest):
 # ─────────────────────────────────────────────────────────────────────────────
 # Helper: rimuove i payload pesanti dagli eventi prima di serializzarli
 # ─────────────────────────────────────────────────────────────────────────────
+from typing import Dict, Any
+
+# Costanti per la gestione del troncamento
+_MAX_FIELD_LENGTH = 100
+_TRUNCATION_SUFFIX = (
+    "....(contenuto taglaito a 100 caratteri, se si necessita di visualizzare "
+    "nuovamente in forma integrale riutilizza lo strumento in modo intelligente)"
+)
+
+
+def _truncate_value(value: Any, max_len: int = _MAX_FIELD_LENGTH) -> Any:
+    """
+    Applica il troncamento ricorsivo a qualsiasi valore JSON-like.
+
+    Regole:
+    - Se `value` è un dict: applica ricorsivamente la funzione ai valori.
+    - Se `value` è una lista/tupla: applica ricorsivamente ad ogni elemento.
+    - Altrimenti:
+        • Converte il valore in stringa SOLO per valutarne la lunghezza.
+        • Se la stringa è ≤ max_len: ritorna il valore originale (tipo preservato).
+        • Se la stringa è > max_len: ritorna la stringa troncata + suffisso,
+          quindi il tipo diventa stringa.
+    """
+    # Dizionari: processa solo i valori, non le chiavi
+    if isinstance(value, dict):
+        return {k: _truncate_value(v, max_len=max_len) for k, v in value.items()}
+
+    # Liste / tuple: processa ogni elemento
+    if isinstance(value, list):
+        return [_truncate_value(v, max_len=max_len) for v in value]
+    if isinstance(value, tuple):
+        return tuple(_truncate_value(v, max_len=max_len) for v in value)
+
+    # Valori scalari / altri tipi:
+    # li convertiamo in stringa solo per verificare la lunghezza
+    s = value if isinstance(value, str) else str(value)
+
+    if len(s) <= max_len:
+        # Nessun troncamento: preserviamo il tipo originale
+        return value
+
+    # Troncamento: ritorniamo SEMPRE una stringa abbreviata
+    return s[:max_len] + _TRUNCATION_SUFFIX
+
+
 def _sanitize_event(evt: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Restituisce una copia dell'evento `evt` in cui, se presente,
-    `evt["data"]["output"]` viene sostituito con la stringa fissa
-    "Contenuto non mostrato..".
+    Restituisce una copia "sicura" dell'evento `evt` (tipicamente un evento
+    di output di uno strumento/tool).
 
-    Puoi estendere facilmente la funzione per filtrare anche altri campi
-    (es. `input` in on_tool_start) senza rompere nulla.
+    Comportamento:
+    - Viene creata una copia shallow del dict di evento.
+    - Viene creata una copia shallow anche del sotto-dict `data` (se presente),
+      per evitare di mutare l'oggetto originale.
+    - Su TUTTA la struttura così copiata (evt + campi annidati) viene applicato
+      un troncamento ricorsivo:
+        • Ogni campo (anche annidato in dict e liste) viene considerato.
+        • Se il valore, convertito in stringa, supera i 100 caratteri, viene
+          sostituito con una versione troncata a 100 caratteri seguita da:
+          '....(contenuto taglaito a 100 caratteri, se si necessita di visualizzare '
+          'nuovamente in forma integrale riutilizza lo strumento in modo intelligente)'
+        • I valori che non superano 100 caratteri rimangono invariati, incluso il tipo.
+
+    Questo evita di mostrare output troppo lunghi nel log eventi, pur mantenendo
+    una visibilità sufficiente per il debug e l'uso “intelligente” dello strumento.
     """
-    safe_evt = dict(evt)                       # shallow-copy
-    data = dict(safe_evt.get("data", {}))      # copia del sotto-dict
-    #if "output" in data:                       # se presente ➜ sostituisci
-        #data["output"] = "Contenuto non mostrato.."
-    safe_evt["data"] = data
+    # Copia shallow dell'evento
+    safe_evt = dict(evt)
+
+    # Copia shallow del sotto-dict "data" se presente e se è un dict
+    data = safe_evt.get("data")
+    if isinstance(data, dict):
+        safe_evt["data"] = dict(data)
+
+    # Applica il troncamento ricorsivo su tutta la struttura dell'evento
+    safe_evt = _truncate_value(safe_evt, max_len=_MAX_FIELD_LENGTH)
+
     return safe_evt
+
 
 #@router.post("/stream_events_chain")
 async def stream_events_chain(request: ExecuteChainRequest):
