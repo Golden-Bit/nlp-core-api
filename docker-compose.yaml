@@ -1,27 +1,39 @@
-version: '3.8'
+version: "3.9"
 
 services:
-  #mongodb:
-  #  image: mongo:6.0  # Utilizza l'immagine ufficiale di MongoDB
-  #  container_name: mongodb
-  #  restart: always
-  #  ports:
-  #    - "27017:27017"
-  #  volumes:
-  #    - mongodb_data:/data/db
-
-  app:
+  api:
     build: .
-    container_name: llm_core_api
-    restart: always
+    container_name: fastapi-api
     ports:
       - "8100:8100"
-    #depends_on:
-    #  - mongodb
     environment:
-      - LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+      TZ: Europe/Rome
+      # usa mongodb come hostname (service name)
+      MONGODB_URI: mongodb://mongodb:27017/
+      APP_DIR: /build_app
+      PERSIST_ROOT: /persist
+      # RESEED: "1"   # <-- opzionale: forza riallineamento persist dal repo (ATTENZIONE: sovrascrive il volume)
     volumes:
-      - .:/build_app
+      # Persistenza visibile anche sul server host
+      - ./persist:/persist
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    restart: unless-stopped
+
+  mongodb:
+    image: mongo:7
+    container_name: mongodb
+    ports:
+      - "27017:27017"   # opzionale (utile se vuoi collegarti da host)
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "mongodb://localhost:27017/admin", "--eval", "db.runCommand({ ping: 1 }).ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
 
 volumes:
-  mongodb_data:
+  mongo_data:
