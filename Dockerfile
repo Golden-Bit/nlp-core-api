@@ -10,21 +10,30 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-pip \
     ca-certificates \
     tzdata \
-    bash && \
-    ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
-    dpkg-reconfigure --frontend noninteractive tzdata && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    bash \
+    \
+    # >>> Fix per OpenCV (cv2) / libGL <<<
+    libgl1 \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender1 \
+    \
+    # (opzionale ma utile se lavori con video)
+    ffmpeg \
+    && ln -fs /usr/share/zoneinfo/$TZ /etc/localtime \
+    && dpkg-reconfigure --frontend noninteractive tzdata \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build_app
 
-# Migliora caching: prima requirements, poi il resto
 COPY requirements.txt /build_app/requirements.txt
 RUN python3.10 -m pip install --no-cache-dir --upgrade pip && \
     python3.10 -m pip install --no-cache-dir -r requirements.txt
 
 COPY . /build_app
 
-# Entry point per persistenza cartelle
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
